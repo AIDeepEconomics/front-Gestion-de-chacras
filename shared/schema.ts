@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, boolean, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, boolean, integer, timestamp, decimal } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -76,6 +76,64 @@ export const remitos = pgTable("remitos", {
   notes: text("notes"),
 });
 
+export const silos = pgTable("silos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  siloId: text("silo_id").notNull(), // User-defined silo identifier
+  industrialPlantId: varchar("industrial_plant_id").references(() => industrialPlants.id).notNull(),
+  type: text("type").notNull(), // tipo de silo
+  maxCapacity: decimal("max_capacity", { precision: 10, scale: 2 }).notNull(), // toneladas
+  currentOccupancy: decimal("current_occupancy", { precision: 10, scale: 2 }).default("0"), // toneladas ocupadas
+  diameter: decimal("diameter", { precision: 8, scale: 2 }).notNull(), // metros - required for FIFO logic
+  createdAt: text("created_at").defaultNow(),
+});
+
+export const riceBatches = pgTable("rice_batches", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  remitoId: varchar("remito_id").references(() => remitos.id).notNull(),
+  siloId: varchar("silo_id").references(() => silos.id).notNull(),
+  chacraId: varchar("chacra_id").references(() => chacras.id).notNull(),
+  chacraName: text("chacra_name").notNull(), // denormalized
+  variety: text("variety").notNull(), // variedad de arroz
+  tonnage: decimal("tonnage", { precision: 10, scale: 2 }).notNull(),
+  originalTonnage: decimal("original_tonnage", { precision: 10, scale: 2 }).notNull(), // original amount before any transfers
+  entryDate: text("entry_date").notNull(), // ISO string format
+  layerOrder: integer("layer_order").notNull().default(0), // for FIFO logic
+});
+
+export const transfers = pgTable("transfers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  fromSiloId: varchar("from_silo_id").references(() => silos.id),
+  toSiloId: varchar("to_silo_id").references(() => silos.id),
+  transferType: text("transfer_type").notNull(), // silo_to_silo, silo_to_sale
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  transferLogic: text("transfer_logic").notNull(), // proportional_mix, fifo_layers
+  transferDate: text("transfer_date").notNull(), // ISO string format
+  notes: text("notes"),
+  saleOrderId: text("sale_order_id"), // if transferType is silo_to_sale
+});
+
+export const transferBatchDetails = pgTable("transfer_batch_details", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  transferId: varchar("transfer_id").references(() => transfers.id).notNull(),
+  riceBatchId: varchar("rice_batch_id").references(() => riceBatches.id).notNull(),
+  amountTransferred: decimal("amount_transferred", { precision: 10, scale: 2 }).notNull(),
+});
+
+export const industrialProcesses = pgTable("industrial_processes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  siloId: varchar("silo_id").references(() => silos.id).notNull(),
+  processType: text("process_type").notNull(), // secado, aireacion, limpieza, etc.
+  processDate: text("process_date").notNull(), // ISO string format
+  parameters: text("parameters"), // JSON string with process parameters
+  notes: text("notes"),
+});
+
+export const plantTransferSettings = pgTable("plant_transfer_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  industrialPlantId: varchar("industrial_plant_id").references(() => industrialPlants.id).notNull().unique(),
+  defaultTransferLogic: text("default_transfer_logic").notNull().default("proportional_mix"), // proportional_mix, fifo_layers
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -110,6 +168,31 @@ export const insertRemitoSchema = createInsertSchema(remitos).omit({
   createdAt: true,
 });
 
+export const insertSiloSchema = createInsertSchema(silos).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertRiceBatchSchema = createInsertSchema(riceBatches).omit({
+  id: true,
+});
+
+export const insertTransferSchema = createInsertSchema(transfers).omit({
+  id: true,
+});
+
+export const insertTransferBatchDetailSchema = createInsertSchema(transferBatchDetails).omit({
+  id: true,
+});
+
+export const insertIndustrialProcessSchema = createInsertSchema(industrialProcesses).omit({
+  id: true,
+});
+
+export const insertPlantTransferSettingsSchema = createInsertSchema(plantTransferSettings).omit({
+  id: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Mill = typeof mills.$inferSelect;
@@ -126,3 +209,15 @@ export type IndustrialPlant = typeof industrialPlants.$inferSelect;
 export type InsertIndustrialPlant = z.infer<typeof insertIndustrialPlantSchema>;
 export type Remito = typeof remitos.$inferSelect;
 export type InsertRemito = z.infer<typeof insertRemitoSchema>;
+export type Silo = typeof silos.$inferSelect;
+export type InsertSilo = z.infer<typeof insertSiloSchema>;
+export type RiceBatch = typeof riceBatches.$inferSelect;
+export type InsertRiceBatch = z.infer<typeof insertRiceBatchSchema>;
+export type Transfer = typeof transfers.$inferSelect;
+export type InsertTransfer = z.infer<typeof insertTransferSchema>;
+export type TransferBatchDetail = typeof transferBatchDetails.$inferSelect;
+export type InsertTransferBatchDetail = z.infer<typeof insertTransferBatchDetailSchema>;
+export type IndustrialProcess = typeof industrialProcesses.$inferSelect;
+export type InsertIndustrialProcess = z.infer<typeof insertIndustrialProcessSchema>;
+export type PlantTransferSettings = typeof plantTransferSettings.$inferSelect;
+export type InsertPlantTransferSettings = z.infer<typeof insertPlantTransferSettingsSchema>;
