@@ -6,33 +6,16 @@ import { IndustrialPlant, Silo, RiceBatch } from "@shared/schema";
 export default function PlantasySilos() {
   const [selectedPlant, setSelectedPlant] = useState<IndustrialPlant | null>(null);
 
-  // TODO: remove mock functionality - comprehensive mock data for plants
-  const mockPlants: IndustrialPlant[] = [
-    {
-      id: "1",
-      name: "Planta Industrial SAMAN",
-      location: "Treinta y Tres",
-      silos: ["Silo A-1", "Silo A-2", "Silo A-3", "Silo B-1", "Silo B-2"]
+  const { data: plants = [], isLoading: plantsLoading } = useQuery({
+    queryKey: ['/api/plants'],
+    queryFn: async () => {
+      const response = await fetch('/api/plants');
+      if (!response.ok) {
+        throw new Error('Failed to fetch plants');
+      }
+      return response.json() as IndustrialPlant[];
     },
-    {
-      id: "2",
-      name: "Molino San Fernando",
-      location: "Rocha", 
-      silos: ["Silo Norte", "Silo Sur", "Silo Centro"]
-    },
-    {
-      id: "3",
-      name: "Cooperativa Arrocera del Este",
-      location: "Cerro Largo",
-      silos: ["Silo 1", "Silo 2", "Silo 3", "Silo 4"]
-    },
-    {
-      id: "4",
-      name: "Planta Industrial del Norte",
-      location: "Tacuarembó",
-      silos: ["Silo Principal", "Silo Secundario"]
-    }
-  ];
+  });
 
   return (
     <div className="space-y-6">
@@ -46,9 +29,10 @@ export default function PlantasySilos() {
         {/* Panel Izquierdo: Lista de Plantas */}
         <div className="lg:col-span-1">
           <PlantList
-            plants={mockPlants}
+            plants={plants}
             selectedPlant={selectedPlant}
             onPlantSelect={setSelectedPlant}
+            isLoading={plantsLoading}
           />
         </div>
         

@@ -6,18 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Plus } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { insertSiloSchema, type InsertSilo } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 
-const siloFormSchema = z.object({
-  siloId: z.string().min(1, "ID del silo es requerido"),
-  type: z.string().min(1, "Tipo de silo es requerido"),
-  maxCapacity: z.string().min(1, "Capacidad máxima es requerida"),
-  diameter: z.string().min(1, "Diámetro es requerido"),
-});
-
-type SiloFormValues = z.infer<typeof siloFormSchema>;
+type SiloFormValues = InsertSilo;
 
 interface SiloFormModalProps {
   industrialPlantId: string;
@@ -27,42 +22,56 @@ interface SiloFormModalProps {
 export default function SiloFormModal({ industrialPlantId, onSiloAdded }: SiloFormModalProps) {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const form = useForm<SiloFormValues>({
-    resolver: zodResolver(siloFormSchema),
+    resolver: zodResolver(insertSiloSchema),
     defaultValues: {
       siloId: "",
       type: "",
       maxCapacity: "",
       diameter: "",
+      industrialPlantId,
+    },
+  });
+
+  const createSiloMutation = useMutation({
+    mutationFn: async (data: InsertSilo) => {
+      return await apiRequest({
+        method: 'POST',
+        url: '/api/silos',
+        data,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/silos', industrialPlantId] });
+      toast({
+        title: "Silo creado exitosamente",
+        description: `El silo ha sido registrado en la planta.`,
+      });
+      form.reset();
+      setOpen(false);
+      onSiloAdded?.();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error al crear silo",
+        description: error?.response?.data?.error || "Ocurrió un error al intentar crear el silo.",
+        variant: "destructive",
+      });
     },
   });
 
   const onSubmit = async (values: SiloFormValues) => {
-    try {
-      // TODO: Implement API call to create silo
-      console.log("Creating silo:", {
-        ...values,
-        industrialPlantId,
-        maxCapacity: parseFloat(values.maxCapacity),
-        diameter: parseFloat(values.diameter),
-      });
-
-      toast({
-        title: "Silo creado exitosamente",
-        description: `El silo ${values.siloId} ha sido registrado en la planta.`,
-      });
-
-      form.reset();
-      setOpen(false);
-      onSiloAdded?.();
-    } catch (error) {
-      toast({
-        title: "Error al crear silo",
-        description: "Ocurrió un error al intentar crear el silo. Intente nuevamente.",
-        variant: "destructive",
-      });
-    }
+    const siloData: InsertSilo = {
+      siloId: values.siloId,
+      type: values.type,
+      maxCapacity: values.maxCapacity,
+      diameter: values.diameter,
+      industrialPlantId,
+    };
+    
+    createSiloMutation.mutate(siloData);
   };
 
   const siloTypes = [
@@ -183,10 +192,10 @@ export default function SiloFormModal({ industrialPlantId, onSiloAdded }: SiloFo
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={createSiloMutation.isPending}
                 data-testid="button-submit-silo"
               >
-                {form.formState.isSubmitting ? "Creando..." : "Crear Silo"}
+                {createSiloMutation.isPending ? "Creando..." : "Crear Silo"}
               </Button>
             </div>
           </form>
