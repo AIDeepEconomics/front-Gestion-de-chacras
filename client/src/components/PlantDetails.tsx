@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Plus, Settings, Building2, Loader2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Plus, Settings, Building2 } from "lucide-react";
 import { IndustrialPlant, Silo, RiceBatch } from "@shared/schema";
 import SiloCard from "./SiloCard";
 import SiloFormModal from "./SiloFormModal";
@@ -18,29 +17,79 @@ type TransferLogic = "proportional_mix" | "fifo_layers";
 export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
   const [transferLogic, setTransferLogic] = useState<TransferLogic>("proportional_mix");
 
-  const { data: silos = [], isLoading: silosLoading, refetch: refetchSilos } = useQuery({
-    queryKey: ['/api/silos', selectedPlant?.id],
-    queryFn: async () => {
-      if (!selectedPlant?.id) return [];
-      const response = await fetch(`/api/silos?plantId=${selectedPlant.id}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch silos');
-      }
-      return response.json() as Silo[];
+  // TODO: remove mock functionality - mock silos for the selected plant
+  const mockSilos: Silo[] = selectedPlant ? [
+    {
+      id: "s1",
+      siloId: "A-1",
+      industrialPlantId: selectedPlant.id,
+      type: "Almacenamiento",
+      maxCapacity: "10000.00",
+      currentOccupancy: "4500.00", 
+      diameter: "12.50",
+      createdAt: new Date().toISOString()
     },
-    enabled: !!selectedPlant?.id,
-  });
+    {
+      id: "s2", 
+      siloId: "A-2",
+      industrialPlantId: selectedPlant.id,
+      type: "Secado",
+      maxCapacity: "8000.00",
+      currentOccupancy: "2800.00",
+      diameter: "10.00",
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: "s3",
+      siloId: "B-1", 
+      industrialPlantId: selectedPlant.id,
+      type: "Almacenamiento",
+      maxCapacity: "12000.00",
+      currentOccupancy: "0.00",
+      diameter: "14.00",
+      createdAt: new Date().toISOString()
+    }
+  ] : [];
 
-  const { data: riceBatches = [] } = useQuery({
-    queryKey: ['/api/rice-batches'],
-    queryFn: async () => {
-      const response = await fetch('/api/rice-batches');
-      if (!response.ok) {
-        throw new Error('Failed to fetch rice batches');
-      }
-      return response.json() as RiceBatch[];
+  // TODO: remove mock functionality - mock rice batches
+  const mockRiceBatches: RiceBatch[] = [
+    {
+      id: "rb1",
+      remitoId: "r1",
+      siloId: "s1",
+      chacraId: "1",
+      chacraName: "Chacra Norte",
+      variety: "INIA Olimar",
+      tonnage: "25.50",
+      originalTonnage: "25.50",
+      entryDate: "2024-09-15T10:30:00.000Z",
+      layerOrder: 1
     },
-  });
+    {
+      id: "rb2",
+      remitoId: "r2", 
+      siloId: "s1",
+      chacraId: "2",
+      chacraName: "Campo Sur",
+      variety: "El Paso 144",
+      tonnage: "28.00",
+      originalTonnage: "28.00", 
+      entryDate: "2024-09-16T14:15:00.000Z",
+      layerOrder: 2
+    },
+    {
+      id: "rb3",
+      remitoId: "r3",
+      siloId: "s2",
+      chacraId: "3", 
+      chacraName: "Potrero Este",
+      variety: "INIA Olimar",
+      tonnage: "22.80",
+      originalTonnage: "22.80",
+      entryDate: "2024-09-17T08:45:00.000Z", 
+      layerOrder: 1
+    }
+  ];
 
   if (!selectedPlant) {
     return (
@@ -74,7 +123,8 @@ export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
             <SiloFormModal 
               industrialPlantId={selectedPlant.id}
               onSiloAdded={() => {
-                refetchSilos();
+                // TODO: Implement refetch logic when real API is connected
+                console.log("Silo added, should refetch data");
               }}
             />
             <Button
@@ -136,17 +186,12 @@ export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
       {/* Silos Grid */}
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-4">
-          Silos ({silos.length})
+          Silos ({mockSilos.length})
         </h3>
-        {silosLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            <span className="ml-2 text-sm text-muted-foreground">Cargando silos...</span>
-          </div>
-        ) : silos.length > 0 ? (
+        {mockSilos.length > 0 ? (
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-            {silos.map((silo) => {
-              const siloBatches = riceBatches.filter(batch => batch.siloId === silo.id);
+            {mockSilos.map((silo) => {
+              const siloBatches = mockRiceBatches.filter(batch => batch.siloId === silo.id);
               return (
                 <SiloCard
                   key={silo.id}
@@ -163,12 +208,10 @@ export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
               <p className="text-muted-foreground">
                 No hay silos registrados para esta planta
               </p>
-              <SiloFormModal 
-                industrialPlantId={selectedPlant.id}
-                onSiloAdded={() => {
-                  refetchSilos();
-                }}
-              />
+              <Button className="mt-4 gap-2" size="sm">
+                <Plus className="h-4 w-4" />
+                Agregar Primer Silo
+              </Button>
             </CardContent>
           </Card>
         )}
