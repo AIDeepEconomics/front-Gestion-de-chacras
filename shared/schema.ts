@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, boolean, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -52,6 +52,30 @@ export const events = pgTable("events", {
   notes: text("notes"),
 });
 
+export const industrialPlants = pgTable("industrial_plants", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  location: text("location"),
+  silos: text("silos").array(), // array of silo names/numbers
+});
+
+export const remitos = pgTable("remitos", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  chacraId: varchar("chacra_id").references(() => chacras.id).notNull(),
+  chacraName: text("chacra_name").notNull(), // denormalized
+  truckMaxTonnage: integer("truck_max_tonnage").notNull(),
+  loadedTonnage: integer("loaded_tonnage").notNull(),
+  driverWhatsapp: text("driver_whatsapp").notNull(),
+  industrialPlantId: varchar("industrial_plant_id").references(() => industrialPlants.id).notNull(),
+  industrialPlantName: text("industrial_plant_name").notNull(), // denormalized
+  destinationSilo: text("destination_silo"),
+  status: text("status").notNull().default("creandose"), // creandose, creado, cargandose, en_viaje, descargandose, perdido_destruido, descargado
+  createdAt: timestamp("created_at").defaultNow(),
+  departureDateTime: timestamp("departure_date_time"),
+  arrivalDateTime: timestamp("arrival_date_time"),
+  notes: text("notes"),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -77,6 +101,15 @@ export const insertEventSchema = createInsertSchema(events).omit({
   id: true,
 });
 
+export const insertIndustrialPlantSchema = createInsertSchema(industrialPlants).omit({
+  id: true,
+});
+
+export const insertRemitoSchema = createInsertSchema(remitos).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Mill = typeof mills.$inferSelect;
@@ -89,3 +122,7 @@ export type Zafra = typeof zafras.$inferSelect;
 export type InsertZafra = z.infer<typeof insertZafraSchema>;
 export type Event = typeof events.$inferSelect;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
+export type IndustrialPlant = typeof industrialPlants.$inferSelect;
+export type InsertIndustrialPlant = z.infer<typeof insertIndustrialPlantSchema>;
+export type Remito = typeof remitos.$inferSelect;
+export type InsertRemito = z.infer<typeof insertRemitoSchema>;
