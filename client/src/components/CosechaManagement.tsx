@@ -1,10 +1,11 @@
-import { useState } from "react";
-import RemitoGenerationForm from "./RemitoGenerationForm";
+import { useState, useEffect } from "react";
+import RemitoGenerationForm, { RemitoFormData, mockIndustrialPlants } from "./RemitoGenerationForm";
 import CosechaTabs from "./CosechaTabs";
 import { Chacra, Remito } from "@shared/schema";
 
 export default function CosechaManagement() {
   const [selectedChacras, setSelectedChacras] = useState<string[]>([]);
+  const [remitos, setRemitos] = useState<Remito[]>([]);
 
   // todo: remove mock functionality - comprehensive mock data for chacras
   const mockChacras: Chacra[] = [
@@ -79,9 +80,9 @@ export default function CosechaManagement() {
       industrialPlantName: "Planta Arrocera del Este",
       destinationSilo: "Silo A-3",
       status: "descargado",
-      createdAt: "2024-09-15T08:00:00Z",
-      departureDateTime: "2024-09-15T10:30:00Z",
-      arrivalDateTime: "2024-09-15T14:45:00Z",
+      createdAt: "2024-09-15T08:00:00.000Z",
+      departureDateTime: "2024-09-15T10:30:00.000Z",
+      arrivalDateTime: "2024-09-15T14:45:00.000Z",
       notes: null
     },
     {
@@ -95,8 +96,8 @@ export default function CosechaManagement() {
       industrialPlantName: "Molino San Fernando",
       destinationSilo: "Silo B-1",
       status: "en_viaje",
-      createdAt: "2024-09-18T09:15:00Z",
-      departureDateTime: "2024-09-18T11:00:00Z",
+      createdAt: "2024-09-18T09:15:00.000Z",
+      departureDateTime: "2024-09-18T11:00:00.000Z",
       arrivalDateTime: null,
       notes: "Carga completa"
     },
@@ -111,7 +112,7 @@ export default function CosechaManagement() {
       industrialPlantName: "Planta Arrocera del Este",
       destinationSilo: "Silo A-5",
       status: "cargandose",
-      createdAt: "2024-09-19T07:30:00Z",
+      createdAt: "2024-09-19T07:30:00.000Z",
       departureDateTime: null,
       arrivalDateTime: null,
       notes: null
@@ -127,7 +128,7 @@ export default function CosechaManagement() {
       industrialPlantName: "Cooperativa Arrocera",
       destinationSilo: null,
       status: "creado",
-      createdAt: "2024-09-19T11:20:00Z",
+      createdAt: "2024-09-19T11:20:00.000Z",
       departureDateTime: null,
       arrivalDateTime: null,
       notes: "WhatsApp enviado"
@@ -143,9 +144,9 @@ export default function CosechaManagement() {
       industrialPlantName: "Planta Industrial del Norte",
       destinationSilo: "Silo C-2",
       status: "descargandose",
-      createdAt: "2024-09-19T13:45:00Z",
-      departureDateTime: "2024-09-19T15:30:00Z",
-      arrivalDateTime: "2024-09-19T18:15:00Z",
+      createdAt: "2024-09-19T13:45:00.000Z",
+      departureDateTime: "2024-09-19T15:30:00.000Z",
+      arrivalDateTime: "2024-09-19T18:15:00.000Z",
       notes: null
     },
     {
@@ -159,30 +160,65 @@ export default function CosechaManagement() {
       industrialPlantName: "Molino San Fernando",
       destinationSilo: "Silo B-3",
       status: "creandose",
-      createdAt: "2024-09-19T16:00:00Z",
+      createdAt: "2024-09-19T16:00:00.000Z",
       departureDateTime: null,
       arrivalDateTime: null,
       notes: null
     }
   ];
 
-  const handleRemitoGeneration = (remitoData: any) => {
+  // Initialize remitos with mock data on component mount
+  useEffect(() => {
+    setRemitos(mockRemitos);
+  }, []);
+
+  const handleRemitoGeneration = (formData: RemitoFormData) => {
     if (selectedChacras.length === 0) {
       alert("Debe seleccionar al menos una chacra en la tabla de abajo");
       return;
     }
     
-    const remitoWithChacras = {
-      ...remitoData,
-      selectedChacras
-    };
+    // Generate remitos for each selected chacra and each form row
+    const newRemitos: Remito[] = [];
+    const currentTimestamp = new Date().toISOString();
     
-    console.log("Generating remitos:", remitoWithChacras);
-    // TODO: Implement actual remito creation logic
+    selectedChacras.forEach(chacraId => {
+      const chacra = mockChacras.find(c => c.id === chacraId);
+      if (!chacra) return;
+      
+      // Process each remito row from the form
+      formData.remitoRows.forEach((rowData, rowIndex) => {
+        const plant = mockIndustrialPlants.find(p => p.id === rowData.industrialPlantId);
+        
+        // Create the specified quantity of remitos for this chacra and row
+        for (let i = 0; i < rowData.quantityRemitos; i++) {
+          const newRemito: Remito = {
+            id: `remito-${Date.now()}-${chacraId}-${rowIndex}-${i}`,
+            chacraId: chacraId,
+            chacraName: chacra.name,
+            truckMaxTonnage: rowData.truckMaxTonnage,
+            loadedTonnage: 0, // Will be filled when loading starts
+            driverWhatsapp: rowData.driverWhatsapp,
+            industrialPlantId: rowData.industrialPlantId,
+            industrialPlantName: plant?.name || "Planta no encontrada",
+            destinationSilo: null, // Will be assigned at plant
+            status: "creandose",
+            createdAt: currentTimestamp,
+            departureDateTime: null,
+            arrivalDateTime: null,
+            notes: null
+          };
+          newRemitos.push(newRemito);
+        }
+      });
+    });
+    
+    // Add new remitos to state
+    setRemitos(prev => [...newRemitos, ...prev]);
     
     // Clear selections after successful generation
     setSelectedChacras([]);
-    alert("Remitos generados exitosamente!");
+    alert(`${newRemitos.length} remitos generados exitosamente!`);
   };
 
   const handleChacraSelectionChange = (chacraId: string, selected: boolean) => {
@@ -209,7 +245,7 @@ export default function CosechaManagement() {
       
       <CosechaTabs
         chacras={mockChacras}
-        remitos={mockRemitos}
+        remitos={remitos}
         selectedChacras={selectedChacras}
         onChacraSelectionChange={handleChacraSelectionChange}
       />

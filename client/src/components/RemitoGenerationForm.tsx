@@ -21,8 +21,8 @@ const remitoFormSchema = z.object({
   remitoRows: z.array(remitoRowSchema).min(1, "Debe tener al menos una fila de remitos")
 });
 
-type RemitoFormData = z.infer<typeof remitoFormSchema>;
-type RemitoRowData = z.infer<typeof remitoRowSchema>;
+export type RemitoFormData = z.infer<typeof remitoFormSchema>;
+export type RemitoRowData = z.infer<typeof remitoRowSchema>;
 
 interface RemitoGenerationFormProps {
   onSubmit: (data: RemitoFormData) => void;
@@ -40,7 +40,7 @@ const truckTonnageOptions = [
 ];
 
 // Mock industrial plants data
-const mockIndustrialPlants = [
+export const mockIndustrialPlants = [
   { id: "1", name: "Planta Arrocera del Este", location: "Treinta y Tres" },
   { id: "2", name: "Molino San Fernando", location: "Rocha" },
   { id: "3", name: "Cooperativa Arrocera", location: "Cerro Largo" },
