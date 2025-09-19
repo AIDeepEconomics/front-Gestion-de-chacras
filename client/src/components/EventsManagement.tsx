@@ -217,7 +217,17 @@ export default function EventsManagement() {
   };
 
   const handleEventRegistration = (eventData: any) => {
-    console.log("New event registered:", eventData);
+    if (selectedChacras.length === 0) {
+      alert("Debe seleccionar al menos una chacra en la tabla de abajo");
+      return;
+    }
+    
+    const eventWithChacras = {
+      ...eventData,
+      selectedChacras
+    };
+    
+    console.log("New event registered:", eventWithChacras);
     // TODO: Implement actual event creation logic
     // Clear selections after successful registration
     setSelectedChacras([]);
@@ -241,7 +251,6 @@ export default function EventsManagement() {
         {/* Event Registration Form */}
         <EventRegistrationForm 
           onSubmit={handleEventRegistration}
-          selectedChacras={selectedChacras}
         />
       </div>
       

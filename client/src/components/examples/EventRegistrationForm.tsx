@@ -39,7 +39,6 @@ export default function EventRegistrationFormExample() {
     <div className="p-6 max-w-6xl">
       <EventRegistrationForm 
         onSubmit={handleEventSubmit}
-        selectedChacras={[]}
       />
     </div>
   );

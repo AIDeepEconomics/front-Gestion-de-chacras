@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -6,11 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { CalendarDays, Plus } from "lucide-react";
-import { Chacra } from "@shared/schema";
 
 const eventRegistrationSchema = z.object({
   description: z.string().min(1, "La descripción es requerida"),
@@ -25,10 +22,9 @@ type EventRegistrationData = z.infer<typeof eventRegistrationSchema>;
 
 interface EventRegistrationFormProps {
   onSubmit: (data: EventRegistrationData) => void;
-  selectedChacras: string[];
 }
 
-export default function EventRegistrationForm({ onSubmit, selectedChacras }: EventRegistrationFormProps) {
+export default function EventRegistrationForm({ onSubmit }: EventRegistrationFormProps) {
 
   const form = useForm<EventRegistrationData>({
     resolver: zodResolver(eventRegistrationSchema),
@@ -55,17 +51,8 @@ export default function EventRegistrationForm({ onSubmit, selectedChacras }: Eve
 
 
   const handleSubmit = (data: EventRegistrationData) => {
-    if (selectedChacras.length === 0) {
-      alert("Debe seleccionar al menos una chacra en la tabla de abajo");
-      return;
-    }
-    
-    const eventData = {
-      ...data,
-      selectedChacras
-    };
-    onSubmit(eventData);
-    console.log("Event registered:", eventData);
+    onSubmit(data);
+    console.log("Event registered:", data);
     
     // Reset form
     form.reset();
@@ -209,15 +196,6 @@ export default function EventRegistrationForm({ onSubmit, selectedChacras }: Eve
               />
             </div>
 
-            {/* Selected Chacras Info */}
-            <div className="p-4 bg-muted/30 rounded-md">
-              <p className="text-sm text-muted-foreground">
-                {selectedChacras.length > 0 
-                  ? `${selectedChacras.length} chacra${selectedChacras.length > 1 ? 's' : ''} seleccionada${selectedChacras.length > 1 ? 's' : ''} en la tabla de abajo`
-                  : "Seleccione las chacras en la tabla de abajo donde desea registrar este evento"
-                }
-              </p>
-            </div>
 
             <div className="flex justify-end space-x-4">
               <Button
