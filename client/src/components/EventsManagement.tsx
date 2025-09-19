@@ -11,6 +11,8 @@ export default function EventsManagement() {
     regime: "all",
     type: "all"
   });
+  
+  const [selectedChacras, setSelectedChacras] = useState<string[]>([]);
 
   // todo: remove mock functionality - comprehensive mock data for events and zafras
   const mockChacras: Chacra[] = [
@@ -217,6 +219,16 @@ export default function EventsManagement() {
   const handleEventRegistration = (eventData: any) => {
     console.log("New event registered:", eventData);
     // TODO: Implement actual event creation logic
+    // Clear selections after successful registration
+    setSelectedChacras([]);
+  };
+
+  const handleChacraSelectionChange = (chacraId: string, selected: boolean) => {
+    if (selected) {
+      setSelectedChacras(prev => [...prev, chacraId]);
+    } else {
+      setSelectedChacras(prev => prev.filter(id => id !== chacraId));
+    }
   };
 
   return (
@@ -228,8 +240,8 @@ export default function EventsManagement() {
         
         {/* Event Registration Form */}
         <EventRegistrationForm 
-          chacras={mockChacras}
           onSubmit={handleEventRegistration}
+          selectedChacras={selectedChacras}
         />
       </div>
       
@@ -241,6 +253,8 @@ export default function EventsManagement() {
           events={mockEvents}
           zafras={mockZafras}
           filters={filters}
+          selectedChacras={selectedChacras}
+          onChacraSelectionChange={handleChacraSelectionChange}
         />
       </div>
     </div>

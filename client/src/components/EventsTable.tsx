@@ -2,6 +2,7 @@ import { useState } from "react";
 import TimelineRow from "./TimelineRow";
 import TimelineModal from "./TimelineModal";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Chacra, Event, Zafra } from "@shared/schema";
 import { EventFilters } from "./EventsFilters";
 
@@ -10,9 +11,11 @@ interface EventsTableProps {
   events: Event[];
   zafras: Zafra[];
   filters: EventFilters;
+  selectedChacras: string[];
+  onChacraSelectionChange: (chacraId: string, selected: boolean) => void;
 }
 
-export default function EventsTable({ chacras, events, zafras, filters }: EventsTableProps) {
+export default function EventsTable({ chacras, events, zafras, filters, selectedChacras, onChacraSelectionChange }: EventsTableProps) {
   const [selectedChacra, setSelectedChacra] = useState<Chacra | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -42,13 +45,42 @@ export default function EventsTable({ chacras, events, zafras, filters }: Events
     setModalOpen(true);
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    filteredChacras.forEach((chacra) => {
+      if (checked !== selectedChacras.includes(chacra.id)) {
+        onChacraSelectionChange(chacra.id, checked);
+      }
+    });
+  };
+
+  const isAllSelected = filteredChacras.length > 0 && filteredChacras.every(chacra => selectedChacras.includes(chacra.id));
+  const isSomeSelected = filteredChacras.some(chacra => selectedChacras.includes(chacra.id));
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">
-          Líneas de Tiempo de Chacras
-        </h3>
+        <div className="flex items-center space-x-4">
+          <h3 className="text-lg font-semibold text-foreground">
+            Líneas de Tiempo de Chacras
+          </h3>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="select-all-chacras"
+              checked={isAllSelected}
+              onCheckedChange={handleSelectAll}
+              data-testid="checkbox-select-all-chacras"
+            />
+            <label htmlFor="select-all-chacras" className="text-sm text-muted-foreground cursor-pointer">
+              Seleccionar todas
+            </label>
+          </div>
+        </div>
         <div className="flex items-center space-x-2">
+          {selectedChacras.length > 0 && (
+            <Badge variant="default" className="text-sm">
+              {selectedChacras.filter(id => filteredChacras.find(c => c.id === id)).length} seleccionadas
+            </Badge>
+          )}
           <Badge variant="secondary" className="text-sm">
             {filteredChacras.length} de {chacras.length} chacras
           </Badge>
@@ -63,13 +95,22 @@ export default function EventsTable({ chacras, events, zafras, filters }: Events
       <div className="space-y-3">
         {filteredChacras.length > 0 ? (
           filteredChacras.map((chacra) => (
-            <TimelineRow
-              key={chacra.id}
-              chacra={chacra}
-              events={events}
-              zafras={zafras}
-              onViewDetails={handleViewDetails}
-            />
+            <div key={chacra.id} className="flex items-center space-x-3 border rounded-md p-3 hover-elevate">
+              <Checkbox
+                id={`chacra-select-${chacra.id}`}
+                checked={selectedChacras.includes(chacra.id)}
+                onCheckedChange={(checked) => onChacraSelectionChange(chacra.id, checked as boolean)}
+                data-testid={`checkbox-chacra-${chacra.id}`}
+              />
+              <div className="flex-1">
+                <TimelineRow
+                  chacra={chacra}
+                  events={events}
+                  zafras={zafras}
+                  onViewDetails={handleViewDetails}
+                />
+              </div>
+            </div>
           ))
         ) : (
           <div className="text-center py-8 text-muted-foreground bg-muted/30 rounded-md">

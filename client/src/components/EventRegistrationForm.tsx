@@ -18,20 +18,17 @@ const eventRegistrationSchema = z.object({
   startDate: z.string().min(1, "La fecha de inicio es requerida"),
   endDate: z.string().optional(),
   details: z.string().optional(),
-  notes: z.string().optional(),
-  selectedChacras: z.array(z.string()).min(1, "Debe seleccionar al menos una chacra")
+  notes: z.string().optional()
 });
 
 type EventRegistrationData = z.infer<typeof eventRegistrationSchema>;
 
 interface EventRegistrationFormProps {
-  chacras: Chacra[];
   onSubmit: (data: EventRegistrationData) => void;
+  selectedChacras: string[];
 }
 
-export default function EventRegistrationForm({ chacras, onSubmit }: EventRegistrationFormProps) {
-  const [selectedChacras, setSelectedChacras] = useState<string[]>([]);
-  const [isAllSelected, setIsAllSelected] = useState(false);
+export default function EventRegistrationForm({ onSubmit, selectedChacras }: EventRegistrationFormProps) {
 
   const form = useForm<EventRegistrationData>({
     resolver: zodResolver(eventRegistrationSchema),
@@ -41,8 +38,7 @@ export default function EventRegistrationForm({ chacras, onSubmit }: EventRegist
       startDate: "",
       endDate: "",
       details: "",
-      notes: "",
-      selectedChacras: []
+      notes: ""
     }
   });
 
@@ -57,28 +53,13 @@ export default function EventRegistrationForm({ chacras, onSubmit }: EventRegist
     { value: "cosecha", label: "Cosecha" }
   ];
 
-  const handleChacraToggle = (chacraId: string, checked: boolean) => {
-    let newSelection;
-    if (checked) {
-      newSelection = [...selectedChacras, chacraId];
-    } else {
-      newSelection = selectedChacras.filter(id => id !== chacraId);
-    }
-    setSelectedChacras(newSelection);
-    form.setValue("selectedChacras", newSelection);
-    
-    // Update "select all" state
-    setIsAllSelected(newSelection.length === chacras.length);
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    const newSelection = checked ? chacras.map(c => c.id) : [];
-    setSelectedChacras(newSelection);
-    setIsAllSelected(checked);
-    form.setValue("selectedChacras", newSelection);
-  };
 
   const handleSubmit = (data: EventRegistrationData) => {
+    if (selectedChacras.length === 0) {
+      alert("Debe seleccionar al menos una chacra en la tabla de abajo");
+      return;
+    }
+    
     const eventData = {
       ...data,
       selectedChacras
@@ -88,8 +69,6 @@ export default function EventRegistrationForm({ chacras, onSubmit }: EventRegist
     
     // Reset form
     form.reset();
-    setSelectedChacras([]);
-    setIsAllSelected(false);
   };
 
   return (
@@ -230,65 +209,21 @@ export default function EventRegistrationForm({ chacras, onSubmit }: EventRegist
               />
             </div>
 
-            {/* Chacra Selection */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <FormLabel className="text-base font-medium">
-                  Seleccionar Chacras
-                </FormLabel>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="select-all"
-                    checked={isAllSelected}
-                    onCheckedChange={handleSelectAll}
-                    data-testid="checkbox-select-all"
-                  />
-                  <label htmlFor="select-all" className="text-sm text-muted-foreground">
-                    Seleccionar todas
-                  </label>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-48 overflow-y-auto border rounded-md p-4">
-                {chacras.map((chacra) => (
-                  <div key={chacra.id} className="flex items-center space-x-3 p-2 rounded hover-elevate">
-                    <Checkbox
-                      id={`chacra-${chacra.id}`}
-                      checked={selectedChacras.includes(chacra.id)}
-                      onCheckedChange={(checked) => handleChacraToggle(chacra.id, checked as boolean)}
-                      data-testid={`checkbox-chacra-${chacra.id}`}
-                    />
-                    <label 
-                      htmlFor={`chacra-${chacra.id}`} 
-                      className="text-sm font-medium cursor-pointer flex-1"
-                    >
-                      <div>
-                        <span className="text-foreground">{chacra.name}</span>
-                        <div className="text-xs text-muted-foreground">
-                          {chacra.establishmentName} • {chacra.area} ha
-                        </div>
-                      </div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-              
-              {form.formState.errors.selectedChacras && (
-                <p className="text-sm text-destructive">
-                  {form.formState.errors.selectedChacras.message}
-                </p>
-              )}
+            {/* Selected Chacras Info */}
+            <div className="p-4 bg-muted/30 rounded-md">
+              <p className="text-sm text-muted-foreground">
+                {selectedChacras.length > 0 
+                  ? `${selectedChacras.length} chacra${selectedChacras.length > 1 ? 's' : ''} seleccionada${selectedChacras.length > 1 ? 's' : ''} en la tabla de abajo`
+                  : "Seleccione las chacras en la tabla de abajo donde desea registrar este evento"
+                }
+              </p>
             </div>
 
             <div className="flex justify-end space-x-4">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => {
-                  form.reset();
-                  setSelectedChacras([]);
-                  setIsAllSelected(false);
-                }}
+                onClick={() => form.reset()}
                 data-testid="button-clear-form"
               >
                 Limpiar

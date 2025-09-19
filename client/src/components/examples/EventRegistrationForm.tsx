@@ -38,8 +38,8 @@ export default function EventRegistrationFormExample() {
   return (
     <div className="p-6 max-w-6xl">
       <EventRegistrationForm 
-        chacras={mockChacras}
         onSubmit={handleEventSubmit}
+        selectedChacras={[]}
       />
     </div>
   );
