@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import TabNavigation from "@/components/TabNavigation";
 import MillManagement from "@/components/MillManagement";
+import ChacrasManagement from "@/components/ChacrasManagement";
 import EmptyStateCard from "@/components/EmptyStateCard";
 
 export default function Dashboard() {
@@ -24,10 +25,9 @@ export default function Dashboard() {
         );
       case "chacras":
         return (
-          <EmptyStateCard
-            title="Gestión de Chacras y Polígonos"
-            description="Aquí podrá registrar y administrar sus establecimientos rurales (estancias, fincas) y las chacras pertenecientes a las mismas. Cada chacra representa un plot de tierra, un paddock o campo específico."
-          />
+          <div className="max-w-6xl">
+            <ChacrasManagement />
+          </div>
         );
       case "eventos":
         return (
