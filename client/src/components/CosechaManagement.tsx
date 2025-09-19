@@ -197,7 +197,7 @@ export default function CosechaManagement() {
             chacraId: chacraId,
             chacraName: chacra.name,
             truckMaxTonnage: rowData.truckMaxTonnage,
-            loadedTonnage: 0, // Will be filled when loading starts
+            loadedTonnage: rowData.loadedTonnage, // From form input
             driverWhatsapp: rowData.driverWhatsapp,
             industrialPlantId: rowData.industrialPlantId,
             industrialPlantName: plant?.name || "Planta no encontrada",
