@@ -1,0 +1,55 @@
+"Trazabilidad"
+Esta interfaz es para el personal comercial y de logística. Su función es crear órdenes de venta y vincularlas a lotes de arroz específicos, generando un certificado de trazabilidad completo desde la chacra hasta el cliente.
+
+2.1. Layout y Flujo Principal
+Botón de Acción Principal: Un botón prominente + Crear Nueva Orden de Venta.
+
+Tabla de Órdenes de Venta: Debajo, una tabla que lista todas las órdenes de venta existentes.
+
+Columnas: ID Orden, Cliente, Destino, Tonelaje Total, Fecha, y Estado.
+
+Columna Estado: Debe usar insignias (Badge) para una rápida identificación visual (Virgen, En Proceso, Lista, Despachando, Despachada, Rechazada, Cancelada).
+
+Columna Acciones: Un menú por fila con las opciones: "Ver Trazabilidad Completa", "Editar", "Cancelar Orden".
+
+2.2. Flujo de Creación de Orden de Venta (Wizard)
+Al presionar + Crear Nueva Orden de Venta, se inicia un wizard de 3 pasos.
+
+Paso 1: Datos Generales de la Orden
+
+Un formulario para ingresar: Nombre del Cliente, Destino, Cantidad Total Requerida (t), y Requerimientos de Calidad/Certificaciones.
+
+Paso 2: Asignación de Lotes de Origen
+
+Esta es la interfaz central de la trazabilidad.
+
+El usuario ve una lista de todos los silos disponibles con su contenido actual (lotes y cantidades).
+
+El usuario debe seleccionar de qué silos y en qué cantidad extraerá arroz para cumplir con la orden. Puede seleccionar arroz de múltiples silos.
+
+A medida que el usuario asigna arroz, un panel de resumen a la derecha se actualiza en tiempo real.
+
+Paso 3: Resumen de Trazabilidad y Confirmación
+
+Este panel muestra la composición final y consolidada de la orden de venta.
+
+Sección 1: Desglose de Origen:
+
+Una tabla o lista que muestra la contribución porcentual y en toneladas de cada chacra de origen.
+
+Columnas: Chacra Origen, Productor, Variedad, Porcentaje (%), Tonelaje (t).
+
+Sección 2: Cálculo de Sostenibilidad:
+
+Un cuadro de resumen que muestra las métricas de sostenibilidad promedio ponderadas para el total de la orden.
+
+Lógica de Cálculo: El sistema debe tomar los datos de insumos, energía y agua registrados por hectárea para cada chacra (de la pestaña "Eventos"), convertirlos a "por tonelada" usando el rendimiento de la cosecha de esa chacra, y luego calcular el promedio ponderado basado en la contribución de cada chacra a la orden de venta final.
+
+Resultado mostrado: "Huella de Carbono estimada: X kg CO₂-eq / ton".
+
+Acción Final: Un botón Generar Orden y Reservar Inventario. Al presionarlo, el sistema crea la orden, la agrega a la tabla principal con estado "Virgen", y descuenta las cantidades asignadas de los silos correspondientes (marcando esos lotes como "reservados").
+
+2.3. Modal "Ver Trazabilidad Completa"
+Al seleccionar esta opción desde la tabla de órdenes, se abre un modal de solo lectura que presenta la misma información del Paso 3 del wizard.
+
+Debe incluir un botón para Exportar Reporte de Trazabilidad (PDF), que genera un documento formal para el cliente final con todo el desglose de origen y las métricas de sostenibilidad.

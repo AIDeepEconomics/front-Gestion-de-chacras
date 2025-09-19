@@ -96,16 +96,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/silos", async (req, res) => {
     try {
+      console.log("POST /api/silos - Raw body:", req.body);
       const validatedData = insertSiloSchema.parse(req.body);
+      console.log("POST /api/silos - Validated data:", validatedData);
       const silo = await storage.createSilo(validatedData);
+      console.log("POST /api/silos - Created silo:", silo);
       res.status(201).json(silo);
     } catch (error) {
+      console.log("POST /api/silos - Error:", error);
       if (error instanceof Error) {
         if (error.message === "Industrial plant not found") {
           return res.status(400).json({ error: "Industrial plant not found" });
         }
       }
       if (error && typeof error === 'object' && 'name' in error && error.name === 'ZodError') {
+        console.log("ZodError issues:", (error as any).issues);
         return res.status(400).json({ error: "Invalid silo data", issues: (error as any).issues });
       }
       res.status(500).json({ error: "Failed to create silo" });

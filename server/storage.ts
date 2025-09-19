@@ -81,6 +81,30 @@ export class MemStorage implements IStorage {
     this.transferBatchDetails = new Map();
     this.industrialProcesses = new Map();
     this.plantTransferSettings = new Map();
+    
+    // Initialize with seed data for testing
+    this.initializeSeedData();
+  }
+
+  private initializeSeedData(): void {
+    // Create some industrial plants for testing
+    const seedPlants = [
+      { name: "Planta Industrial SAMAN", location: "Treinta y Tres" },
+      { name: "Molino San Fernando", location: "Rocha" },
+      { name: "Cooperativa Arrocera del Este", location: "Cerro Largo" },
+      { name: "Planta Industrial del Norte", location: "Tacuarembó" }
+    ];
+
+    seedPlants.forEach(plantData => {
+      const id = randomUUID();
+      const plant: IndustrialPlant = {
+        id,
+        name: plantData.name,
+        location: plantData.location,
+        silos: null
+      };
+      this.industrialPlants.set(id, plant);
+    });
   }
 
   async getUser(id: string): Promise<User | undefined> {
