@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import TabNavigation from "@/components/TabNavigation";
 import MillManagement from "@/components/MillManagement";
 import ChacrasManagement from "@/components/ChacrasManagement";
+import EventsManagement from "@/components/EventsManagement";
 import EmptyStateCard from "@/components/EmptyStateCard";
 
 export default function Dashboard() {
@@ -31,10 +32,9 @@ export default function Dashboard() {
         );
       case "eventos":
         return (
-          <EmptyStateCard
-            title="Registro de Eventos"
-            description="Registre eventos de sus chacras como fertilizaciones, siembras, cosechas y eventos fenológicos como floración y emergencia. Esta funcionalidad estará disponible próximamente."
-          />
+          <div className="max-w-7xl">
+            <EventsManagement />
+          </div>
         );
       case "cosecha":
         return (

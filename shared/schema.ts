@@ -31,6 +31,27 @@ export const chacras = pgTable("chacras", {
   establishmentName: text("establishment_name").notNull(), // denormalized for easier querying
 });
 
+export const zafras = pgTable("zafras", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  chacraId: varchar("chacra_id").references(() => chacras.id),
+  startDate: text("start_date").notNull(),
+  endDate: text("end_date").notNull(),
+  type: text("type").notNull(), // arroz, pasturas
+  variety: text("variety"), // variedad de arroz o mezcla forrajera
+  waterLevel: text("water_level"), // lámina de agua para arroz
+  notes: text("notes"),
+});
+
+export const events = pgTable("events", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  chacraId: varchar("chacra_id").references(() => chacras.id),
+  zafraId: varchar("zafra_id").references(() => zafras.id),
+  type: text("type").notNull(), // laboreo, fertilización, siembra, emergencia, inundación, aplicación, drenado, cosecha
+  date: text("date").notNull(),
+  details: text("details"), // detalles como "urea, 80 kg/ha"
+  notes: text("notes"),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -48,6 +69,14 @@ export const insertChacraSchema = createInsertSchema(chacras).omit({
   id: true,
 });
 
+export const insertZafraSchema = createInsertSchema(zafras).omit({
+  id: true,
+});
+
+export const insertEventSchema = createInsertSchema(events).omit({
+  id: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Mill = typeof mills.$inferSelect;
@@ -56,3 +85,7 @@ export type Establishment = typeof establishments.$inferSelect;
 export type InsertEstablishment = z.infer<typeof insertEstablishmentSchema>;
 export type Chacra = typeof chacras.$inferSelect;
 export type InsertChacra = z.infer<typeof insertChacraSchema>;
+export type Zafra = typeof zafras.$inferSelect;
+export type InsertZafra = z.infer<typeof insertZafraSchema>;
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = z.infer<typeof insertEventSchema>;
