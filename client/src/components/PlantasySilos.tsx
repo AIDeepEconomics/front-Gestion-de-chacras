@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import PlantList from "./PlantList";
 import PlantDetails from "./PlantDetails";
-import { IndustrialPlant, Silo, RiceBatch } from "@shared/schema";
+import { IndustrialPlant } from "@shared/schema";
 
 export default function PlantasySilos() {
   const [selectedPlant, setSelectedPlant] = useState<IndustrialPlant | null>(null);
