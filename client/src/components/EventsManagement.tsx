@@ -1,4 +1,5 @@
 import { useState } from "react";
+import EventRegistrationForm from "./EventRegistrationForm";
 import EventsFilters, { EventFilters } from "./EventsFilters";
 import EventsTable from "./EventsTable";
 import { Chacra, Event, Zafra } from "@shared/schema";
@@ -213,21 +214,35 @@ export default function EventsManagement() {
     console.log("Filters changed:", newFilters);
   };
 
+  const handleEventRegistration = (eventData: any) => {
+    console.log("New event registered:", eventData);
+    // TODO: Implement actual event creation logic
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <h2 className="text-xl font-semibold text-foreground mb-6">
           Gestión de Eventos y Líneas de Tiempo
         </h2>
-        <EventsFilters onFilterChange={handleFilterChange} />
+        
+        {/* Event Registration Form */}
+        <EventRegistrationForm 
+          chacras={mockChacras}
+          onSubmit={handleEventRegistration}
+        />
       </div>
       
-      <EventsTable 
-        chacras={mockChacras}
-        events={mockEvents}
-        zafras={mockZafras}
-        filters={filters}
-      />
+      <div className="space-y-6">
+        <EventsFilters onFilterChange={handleFilterChange} />
+        
+        <EventsTable 
+          chacras={mockChacras}
+          events={mockEvents}
+          zafras={mockZafras}
+          filters={filters}
+        />
+      </div>
     </div>
   );
 }

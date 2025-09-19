@@ -1,0 +1,19 @@
+Ok, ahora en la pestaña de chacras tenremos primero centrado arriba un mapa con las chacras (este mapa sera un mock up ahora (una imagen), el mapa dira establecieminto “la juanita” arriba, ese mapa funciona con pestañas, donde hay una segunda pestaña para establecmiento “don timoteo”, y una tercer pestaña que dice “nuevo establecimiento”. 
+Es decir los mapas estan como organizados por pestaña. Ahoar al ser un moc up pueden ser una imagen o simplemenet dejamos el cuadrado en blanco y le ponemos “mapa” o ago asi.
+
+Luego abajo una lista de todas las chacras con nombre, area (hectareas), regimen (propiedad, arrendamiento, gestionando para terceros), estableclimiento (nombre del establecieminto).
+Esta sera en forma de tabla, donde cada chacra esta una abajo de la otra en filas, con esos datos en columnas, con los encabezados. A su vez los encabezados se pueden clickear para ordenar las chacras de menor a mayor de acuerdo al encabezado (por area, o por establecimeinto, etc).
+Necesoto datos mock con todas las opciones (chacras en propiedad, gesyinadas para tercereos, mas de 1 establecimeinto.. etc..).
+
+Ahora haremos la pesaña de eventos. En la misma se registran todos los eventos de cada chacra.
+Arriba de todo tenemos campo de texto para llenar asi como un campo de fecha para poner (se puede poner fecha de inicio y fin o solo fecha de ocurrencia (algo que ocurrion un oslo dia) y abajo un boton que dice registrar evento/s, debajo tenemos la lista de todas las chacras en formato tabla similara a la existente en  Gestión de Chacras y Polígonos, esta chacras tienen a la izquierda de todo un cajita para hace tick y elegir las chacras en las cual uno quiere añadir el evento, para luego clicekar registrar evento. 
+
+
+
+Como venimos diciendo, debajo del menu para registrar los eventos estan las listas de todas las chacras, similar a como lo hicimos en Gestión de Chacras y Polígonos, pero enfocada en mostrar los eventos como lineas de tiempo. 
+ Los eventos se muetsran dentro de una liena de tiempo, que por default esta dividida en zafras de e 6 meses, cuando se cosecha el arroz, finaliza la zafra, en cada zafra uno debe elegir què hay habra presente en ese campo: arroz y variedad del mismo asi como la lamina de agua, y alguna tra infomacion general, o pastura y mezcla forrajera de la misma (ejemplo fetsuca y trebol blanco, etc..  reocrdemos que es en el contexto productivo uruguayo).
+. Similarmente a la pestaña Gestión de Chacras y Polígonos, en esta pestaña Eventos tendremos una tabla con todas las chacras. La difeerencia es que esta vez en las chacras se vera su nombre y area, y luego las lienas de tiempo de cada una, a su derecha. Arriba de las chacras, tendremos un menu desplegable para fltrar por establecimeinto, por zafra, regimen (propiedad, arrendamiento, gestionando para terceros), por tipo (arroz o pasturas).
+La linea de tiempo es teoricamente infinita de larga, pero se ven solo los ultimos 6 meses, por default. Entre zafra y zafra hay una clara linea divisoria en la linea de tiempo. Cuando hay pasturas la zafra tiene un color verde claro y cunaod hay arroz un color blanco merengue claro. EN la linea de tiempo se puede ver laboreao, fertilizacion, siembra, emergancia, inundacion, aplicación, dreando, cosecha, etc. 
+. Uno puedo clickear arriba de culaquiera de estas chacras y tener una vista mas detallada de la linea de tiempo, donde  aparece un modal de esa chacra:
+EN el modla esta la linea de tiempo donde uno puede mover la linea del tiempo hacia la derecha o la izquierda para recorrerla toda (clcik izquierdo y mantener apretado para mover la linea de tiempo). En esta linea de tiempo aparac cada evento con su fecha y un pequeña nota que se puede ver cuanod uno scroll sobre el evento (por ejemplo si una scroll sobre el evento, fertilizacion aparece una pequeña nota con las detalles “urea, 80 kg/ha” y cosas asi con los otros eventos).
+
