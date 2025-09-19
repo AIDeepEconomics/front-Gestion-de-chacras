@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Plus, Settings, Building2 } from "lucide-react";
 import { IndustrialPlant, Silo, RiceBatch } from "@shared/schema";
 import SiloCard from "./SiloCard";
@@ -12,10 +10,7 @@ interface PlantDetailsProps {
   selectedPlant: IndustrialPlant | null;
 }
 
-type TransferLogic = "proportional_mix" | "fifo_layers";
-
 export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
-  const [transferLogic, setTransferLogic] = useState<TransferLogic>("proportional_mix");
 
   // TODO: remove mock functionality - mock silos for the selected plant
   const mockSilos: Silo[] = selectedPlant ? [
@@ -138,48 +133,6 @@ export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
             </Button>
           </div>
 
-          {/* Transfer Logic Selector */}
-          <div>
-            <Label className="text-sm font-medium mb-3 block">
-              Lógica de Trasiego
-            </Label>
-            <RadioGroup
-              value={transferLogic}
-              onValueChange={(value: TransferLogic) => setTransferLogic(value)}
-              className="space-y-3"
-            >
-              <div className="flex items-start space-x-3">
-                <RadioGroupItem 
-                  value="proportional_mix" 
-                  id="proportional_mix"
-                  data-testid="radio-proportional-mix"
-                />
-                <div className="space-y-1">
-                  <Label htmlFor="proportional_mix" className="font-medium">
-                    Mezcla Proporcional
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Al extraer un porcentaje del volumen, se extrae el mismo porcentaje de cada lote individual
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <RadioGroupItem 
-                  value="fifo_layers" 
-                  id="fifo_layers"
-                  data-testid="radio-fifo-layers"
-                />
-                <div className="space-y-1">
-                  <Label htmlFor="fifo_layers" className="font-medium">
-                    Manejo por Capas (FIFO)
-                  </Label>
-                  <p className="text-xs text-muted-foreground">
-                    Los lotes más antiguos (abajo) salen primero. Requiere cálculo por capas según diámetro del silo
-                  </p>
-                </div>
-              </div>
-            </RadioGroup>
-          </div>
         </CardContent>
       </Card>
 
@@ -197,7 +150,7 @@ export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
                   key={silo.id}
                   silo={silo}
                   batches={siloBatches}
-                  transferLogic={transferLogic}
+                  availableSilos={mockSilos}
                 />
               );
             })}

@@ -1,20 +1,28 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRightLeft, Wheat } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { ArrowRightLeft, Wheat, ShoppingCart } from "lucide-react";
 import { Silo, RiceBatch } from "@shared/schema";
+import TransferModal from "./TransferModal";
+import SaleAssignmentModal from "./SaleAssignmentModal";
 
 interface SiloCardProps {
   silo: Silo;
   batches: RiceBatch[];
-  transferLogic: "proportional_mix" | "fifo_layers";
+  availableSilos?: Silo[];
 }
 
-export default function SiloCard({ silo, batches, transferLogic }: SiloCardProps) {
-  const maxCapacity = parseFloat(silo.maxCapacity);
-  const currentOccupancy = parseFloat(silo.currentOccupancy);
+type TransferLogic = "proportional_mix" | "fifo_layers";
+
+export default function SiloCard({ silo, batches, availableSilos = [] }: SiloCardProps) {
+  const [transferLogic, setTransferLogic] = useState<TransferLogic>("proportional_mix");
+  const maxCapacity = parseFloat(silo.maxCapacity || "0");
+  const currentOccupancy = parseFloat(silo.currentOccupancy || "0");
   const occupancyPercentage = maxCapacity > 0 ? (currentOccupancy / maxCapacity) * 100 : 0;
 
   const formatDateTime = (dateString: string) => {
@@ -149,18 +157,58 @@ export default function SiloCard({ silo, batches, transferLogic }: SiloCardProps
           )}
         </div>
 
-        {/* Silo Actions */}
-        <div className="pt-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="w-full gap-2"
-            disabled={batches.length === 0}
-            data-testid={`button-transfer-${silo.id}`}
+        {/* Transfer Logic Selector */}
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">Lógica de Trasiego</Label>
+          <RadioGroup
+            value={transferLogic}
+            onValueChange={(value: TransferLogic) => setTransferLogic(value)}
+            className="space-y-2"
           >
-            <ArrowRightLeft className="h-4 w-4" />
-            Realizar Trasiego / Asignar a Venta
-          </Button>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem 
+                value="proportional_mix" 
+                id={`proportional_mix_${silo.id}`}
+                data-testid={`radio-proportional-mix-${silo.id}`}
+              />
+              <Label htmlFor={`proportional_mix_${silo.id}`} className="text-sm">
+                Mezcla Proporcional
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem 
+                value="fifo_layers" 
+                id={`fifo_layers_${silo.id}`}
+                data-testid={`radio-fifo-layers-${silo.id}`}
+              />
+              <Label htmlFor={`fifo_layers_${silo.id}`} className="text-sm">
+                Manejo por Capas (FIFO)
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Silo Actions */}
+        <div className="space-y-2">
+          <TransferModal
+            silo={silo}
+            batches={batches}
+            transferLogic={transferLogic}
+            availableSilos={availableSilos}
+            onTransferComplete={() => {
+              // TODO: Implement refetch logic when real API is connected
+              console.log("Transfer completed, should refetch data");
+            }}
+          />
+          <SaleAssignmentModal
+            silo={silo}
+            batches={batches}
+            transferLogic={transferLogic}
+            onSaleAssigned={() => {
+              // TODO: Implement refetch logic when real API is connected
+              console.log("Sale assigned, should refetch data");
+            }}
+          />
         </div>
       </CardContent>
     </Card>
