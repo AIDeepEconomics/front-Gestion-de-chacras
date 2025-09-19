@@ -134,6 +134,38 @@ export const plantTransferSettings = pgTable("plant_transfer_settings", {
   defaultTransferLogic: text("default_transfer_logic").notNull().default("proportional_mix"), // proportional_mix, fifo_layers
 });
 
+export const salesOrders = pgTable("sales_orders", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderNumber: text("order_number").notNull().unique(), // ID orden visible para usuarios
+  clientName: text("client_name").notNull(),
+  destination: text("destination").notNull(),
+  totalTonnage: decimal("total_tonnage", { precision: 10, scale: 2 }).notNull(),
+  qualityRequirements: text("quality_requirements"), // JSON string con requerimientos
+  status: text("status").notNull().default("Virgen"), // Virgen, En Proceso, Lista, Despachando, Despachada, Rechazada, Cancelada
+  orderDate: text("order_date").default(sql`now()`),
+  estimatedDeliveryDate: text("estimated_delivery_date"),
+  notes: text("notes"),
+  createdAt: text("created_at").default(sql`now()`),
+});
+
+export const salesOrderBatchAssignments = pgTable("sales_order_batch_assignments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  salesOrderId: varchar("sales_order_id").references(() => salesOrders.id).notNull(),
+  riceBatchId: varchar("rice_batch_id").references(() => riceBatches.id).notNull(),
+  siloId: varchar("silo_id").references(() => silos.id).notNull(),
+  assignedTonnage: decimal("assigned_tonnage", { precision: 10, scale: 2 }).notNull(),
+  reservedAt: text("reserved_at").default(sql`now()`),
+});
+
+export const sustainabilityMetrics = pgTable("sustainability_metrics", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  salesOrderId: varchar("sales_order_id").references(() => salesOrders.id).notNull(),
+  carbonFootprintPerTon: decimal("carbon_footprint_per_ton", { precision: 10, scale: 4 }), // kg CO₂-eq / ton
+  waterUsagePerTon: decimal("water_usage_per_ton", { precision: 10, scale: 2 }), // L / ton
+  energyUsagePerTon: decimal("energy_usage_per_ton", { precision: 10, scale: 2 }), // kWh / ton
+  calculatedAt: text("calculated_at").default(sql`now()`),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -193,6 +225,21 @@ export const insertPlantTransferSettingsSchema = createInsertSchema(plantTransfe
   id: true,
 });
 
+export const insertSalesOrderSchema = createInsertSchema(salesOrders).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSalesOrderBatchAssignmentSchema = createInsertSchema(salesOrderBatchAssignments).omit({
+  id: true,
+  reservedAt: true,
+});
+
+export const insertSustainabilityMetricsSchema = createInsertSchema(sustainabilityMetrics).omit({
+  id: true,
+  calculatedAt: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Mill = typeof mills.$inferSelect;
@@ -221,3 +268,9 @@ export type IndustrialProcess = typeof industrialProcesses.$inferSelect;
 export type InsertIndustrialProcess = z.infer<typeof insertIndustrialProcessSchema>;
 export type PlantTransferSettings = typeof plantTransferSettings.$inferSelect;
 export type InsertPlantTransferSettings = z.infer<typeof insertPlantTransferSettingsSchema>;
+export type SalesOrder = typeof salesOrders.$inferSelect;
+export type InsertSalesOrder = z.infer<typeof insertSalesOrderSchema>;
+export type SalesOrderBatchAssignment = typeof salesOrderBatchAssignments.$inferSelect;
+export type InsertSalesOrderBatchAssignment = z.infer<typeof insertSalesOrderBatchAssignmentSchema>;
+export type SustainabilityMetrics = typeof sustainabilityMetrics.$inferSelect;
+export type InsertSustainabilityMetrics = z.infer<typeof insertSustainabilityMetricsSchema>;

@@ -6,6 +6,7 @@ import ChacrasManagement from "@/components/ChacrasManagement";
 import EventsManagement from "@/components/EventsManagement";
 import CosechaManagement from "@/components/CosechaManagement";
 import PlantasySilos from "@/components/PlantasySilos";
+import TrazabilidadManagement from "@/components/TrazabilidadManagement";
 import EmptyStateCard from "@/components/EmptyStateCard";
 
 export default function Dashboard() {
@@ -17,6 +18,7 @@ export default function Dashboard() {
     { id: "eventos", label: "Eventos" },
     { id: "cosecha", label: "Cosecha" },
     { id: "plantas", label: "Plantas y Silos" },
+    { id: "trazabilidad", label: "Trazabilidad" },
   ];
 
   const renderTabContent = () => {
@@ -49,6 +51,12 @@ export default function Dashboard() {
         return (
           <div className="max-w-full">
             <PlantasySilos />
+          </div>
+        );
+      case "trazabilidad":
+        return (
+          <div className="max-w-7xl">
+            <TrazabilidadManagement />
           </div>
         );
       default:
