@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, Settings, Building2 } from "lucide-react";
 import { IndustrialPlant, Silo, RiceBatch } from "@shared/schema";
 import SiloCard from "./SiloCard";
+import SiloFormModal from "./SiloFormModal";
 
 interface PlantDetailsProps {
   selectedPlant: IndustrialPlant | null;
@@ -119,14 +120,13 @@ export default function PlantDetails({ selectedPlant }: PlantDetailsProps) {
         <CardContent className="space-y-6">
           {/* Global Actions */}
           <div className="flex flex-wrap gap-3">
-            <Button
-              size="sm" 
-              className="gap-2"
-              data-testid="button-add-silo"
-            >
-              <Plus className="h-4 w-4" />
-              Agregar Silo
-            </Button>
+            <SiloFormModal 
+              industrialPlantId={selectedPlant.id}
+              onSiloAdded={() => {
+                // TODO: Implement refetch logic when real API is connected
+                console.log("Silo added, should refetch data");
+              }}
+            />
             <Button
               variant="outline"
               size="sm"
