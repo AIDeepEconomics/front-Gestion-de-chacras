@@ -70,9 +70,9 @@ export const remitos = pgTable("remitos", {
   industrialPlantName: text("industrial_plant_name").notNull(), // denormalized
   destinationSilo: text("destination_silo"),
   status: text("status").notNull().default("creandose"), // creandose, creado, cargandose, en_viaje, descargandose, perdido_destruido, descargado
-  createdAt: timestamp("created_at").defaultNow(),
-  departureDateTime: timestamp("departure_date_time"),
-  arrivalDateTime: timestamp("arrival_date_time"),
+  createdAt: text("created_at"), // ISO string format
+  departureDateTime: text("departure_date_time"), // ISO string format  
+  arrivalDateTime: text("arrival_date_time"), // ISO string format
   notes: text("notes"),
 });
 

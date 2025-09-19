@@ -4,6 +4,7 @@ import TabNavigation from "@/components/TabNavigation";
 import MillManagement from "@/components/MillManagement";
 import ChacrasManagement from "@/components/ChacrasManagement";
 import EventsManagement from "@/components/EventsManagement";
+import CosechaManagement from "@/components/CosechaManagement";
 import EmptyStateCard from "@/components/EmptyStateCard";
 
 export default function Dashboard() {
@@ -38,10 +39,9 @@ export default function Dashboard() {
         );
       case "cosecha":
         return (
-          <EmptyStateCard
-            title="Gestión de Cosecha"
-            description="Administre los procesos de cosecha, remitos y envíos a molinos. Esta sección permitirá coordinar directamente con los molinos asociados para el levantamiento del arroz."
-          />
+          <div className="max-w-7xl">
+            <CosechaManagement />
+          </div>
         );
       default:
         return null;
