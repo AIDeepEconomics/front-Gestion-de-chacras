@@ -84,7 +84,7 @@ export const silos = pgTable("silos", {
   maxCapacity: decimal("max_capacity", { precision: 10, scale: 2 }).notNull(), // toneladas
   currentOccupancy: decimal("current_occupancy", { precision: 10, scale: 2 }).default("0"), // toneladas ocupadas
   diameter: decimal("diameter", { precision: 8, scale: 2 }).notNull(), // metros - required for FIFO logic
-  createdAt: text("created_at").defaultNow(),
+  createdAt: text("created_at").default(sql`now()`),
 });
 
 export const riceBatches = pgTable("rice_batches", {
@@ -130,7 +130,7 @@ export const industrialProcesses = pgTable("industrial_processes", {
 
 export const plantTransferSettings = pgTable("plant_transfer_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  industrialPlantId: varchar("industrial_plant_id").references(() => industrialPlants.id).notNull().unique(),
+  industrialPlantId: varchar("industrial_plant_id").references(() => industrialPlants.id).notNull(),
   defaultTransferLogic: text("default_transfer_logic").notNull().default("proportional_mix"), // proportional_mix, fifo_layers
 });
 
