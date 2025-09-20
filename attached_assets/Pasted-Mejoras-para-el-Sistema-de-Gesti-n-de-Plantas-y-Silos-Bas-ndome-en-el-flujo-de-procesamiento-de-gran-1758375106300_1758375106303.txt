@@ -1,0 +1,184 @@
+Mejoras para el Sistema de Gestión de Plantas y Silos
+Basándome en el flujo de procesamiento de granos que compartiste, aquí están las mejoras específicas para la gestión integral de la planta:
+1. Gestión de Llegada y Recepción
+Panel de Control de Portería
+Agregar una vista previa a "Plantas y Silos" para el control de entrada:
+CopyCOLA DE CAMIONES EN ESPERA
+┌─────────────────────────────────────────┐
+│ Camión | Productor | e-Remito | Estado  │
+├─────────────────────────────────────────┤
+│ ABC123 | Juan Pérez| R-2024-001| Esperando│
+│ XYZ789 | María Gómez| R-2024-002| En báscula│
+│ LMN456 | Pedro Silva| R-2024-003| Muestreo│
+└─────────────────────────────────────────┘
+Proceso de Pesaje
+
+Primera pesada (bruto): Registro automático desde báscula
+Toma de muestras: Asignación de código único de muestra
+Descarga en pozo: Asignación de pozo específico
+Segunda pesada (tara): Cálculo automático del neto
+Registro de humedad y calidad inicial: Input directo desde medidor portátil
+
+2. Gestión de Pozos de Descarga
+Agregar sección de pozos antes de los silos:
+CopyPOZOS DE DESCARGA
+┌──────────────────────────────────┐
+│ Pozo 1 - OCUPADO                 │
+│ Contenido: 45 tons               │
+│ Origen: Remitos R-001, R-002     │
+│ Humedad promedio: 18.5%          │
+│ Destino: Secadora S-1            │
+│ [Iniciar Transferencia]          │
+└──────────────────────────────────┘
+3. Integración de Laboratorio
+Panel de Muestras y Análisis
+CopyANÁLISIS DE LABORATORIO PENDIENTES
+┌────────────────────────────────────────────┐
+│ Muestra | Lote | Estado | Resultados      │
+├────────────────────────────────────────────┤
+│ M-001   | R-001| Análisis| - Humedad: 16% │
+│         |      |         | - Impurezas: 2%│
+│         |      |         | - Grano partido: 3%│
+│ M-002   | R-002| Esperando| [Ingresar]   │
+└────────────────────────────────────────────┘
+Vincular resultados con decisiones:
+
+Si humedad > 14% → Directo a secadora
+Si humedad ≤ 14% → Directo a silo de almacenamiento
+Clasificación automática por calidad (Premium/Estándar/Industrial)
+
+4. Mejoras en la Vista de Silos
+Información Crítica por Silo:
+CopySilo A-1 [ALMACENAMIENTO]
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Capacidad: 10,000 t | Ocupación: 4,500 t (45%)
+Estado: ✓ Activo | Último movimiento: hace 2 horas
+
+COMPOSICIÓN ACTUAL:
+├─ Lote R-001: 2,000 t | INIA Olimar | 13.5% hum | 15 días
+├─ Lote R-002: 1,500 t | El Paso 144 | 13.2% hum | 10 días
+└─ Lote R-003: 1,000 t | INIA Olimar | 13.8% hum | 5 días
+
+CALIDAD PROMEDIO:
+- Humedad: 13.5% ✓
+- Impurezas: 1.8% ✓
+- Grano partido: 2.5% ✓
+
+[Muestrear] [Trasegar] [Ver Historial] [Asignar a Orden]
+5. Control de Procesos de Secado
+Panel de Secadoras:
+CopySECADORA S-1 - EN PROCESO
+━━━━━━━━━━━━━━━━━━━━━━━━━
+Lote en proceso: LS-2024-045
+Origen: Pozo 1 (Remitos R-001, R-002)
+Tonelaje: 85 tons
+Humedad entrada: 18.5% → Objetivo: 13.0%
+Tiempo estimado: 4.5 horas
+Progreso: ████████░░ 75%
+
+PARÁMETROS DE SECADO:
+- Temperatura: 65°C
+- Flujo de aire: 2,500 m³/h
+- Consumo gas: 45 m³/h
+
+[Pausar] [Ajustar Parámetros] [Tomar Muestra]
+6. Trazabilidad de Lotes de Secado
+Cada lote de secado debe mantener:
+
+IDs de remitos originales
+Productores involucrados
+Proporciones de mezcla
+Parámetros del proceso
+Resultado final de calidad
+
+CopyLOTE SECADO: LS-2024-045
+┌─────────────────────────────┐
+│ Composición:                │
+│ • 60% Remito R-001          │
+│ • 40% Remito R-002          │
+│                             │
+│ Calidad Final:              │
+│ • Humedad: 13.0%            │
+│ • Merma por secado: 5.5%    │
+│ • Tonelaje final: 80.3 t    │
+└─────────────────────────────┘
+7. Gestión Mejorada de Trasiego
+Modal de Trasiego Mejorado:
+CopyTRASIEGO - Silo A-1 → Silo B-2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ORIGEN (Silo A-1):
+Disponible: 4,500 t
+Composición: 3 lotes mezclados
+
+CANTIDAD A TRANSFERIR: [2,000] toneladas
+
+MÉTODO DE EXTRACCIÓN:
+○ Proporcional (mantiene mezcla actual)
+● Por lote específico:
+  □ R-001: 500 t
+  ☑ R-002: 1,500 t (completo)
+  □ R-003: 0 t
+
+DESTINO (Silo B-2):
+Capacidad disponible: 3,200 t ✓
+Compatibilidad: ✓ Misma variedad
+
+RESULTADO ESPERADO:
+- Silo A-1: 2,500 t (25% ocupación)
+- Silo B-2: 5,200 t (65% ocupación)
+- Calidad resultante B-2: 13.4% humedad
+
+[Cancelar] [Simular] [Confirmar Trasiego]
+8. Ordenes de Molienda/Venta
+Crear orden con trazabilidad completa:
+CopyNUEVA ORDEN DE VENTA/MOLIENDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cliente: [Seleccionar]
+Tipo: ○ Venta directa ● Molienda
+Cantidad requerida: 500 tons
+Calidad requerida: Premium (<14% hum, <2% impurezas)
+
+SILOS DISPONIBLES CON CALIDAD COMPATIBLE:
+☑ Silo A-1: 2,000 t disponibles (13.5% hum)
+☑ Silo C-3: 1,500 t disponibles (13.2% hum)
+☐ Silo B-2: 3,000 t (14.5% hum - NO COMPATIBLE)
+
+COMPOSICIÓN DE LA ORDEN:
+- 300 t de Silo A-1 (Lotes: R-001, R-002)
+- 200 t de Silo C-3 (Lote: LS-2024-045)
+
+[Generar Orden] [Programar para fecha]
+9. Dashboard Unificado de Planta
+Vista principal con todos los procesos:
+CopyPLANTA SAMAN - ESTADO ACTUAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RECEPCIÓN          PROCESO         ALMACENAMIENTO     DESPACHO
+3 camiones    →    2 secando   →   15,000 t      →   2 órdenes
+en espera          1 en pozo        en 8 silos        pendientes
+
+ALERTAS:
+⚠️ Silo A-1: Muestreo quincenal pendiente
+⚠️ Secadora S-2: Mantenimiento programado mañana
+✓ Orden #1234: Lista para despacho
+
+MÉTRICAS DEL DÍA:
+- Recibido: 450 t
+- Secado: 380 t  
+- Despachado: 220 t
+- Merma promedio: 4.8%
+10. Registro de Muestreo Periódico
+Calendario de muestreo por silo:
+CopyPROGRAMA DE MUESTREO - MARZO 2024
+┌──────────────────────────────────┐
+│ Silo  | Último | Próximo | Estado │
+├──────────────────────────────────┤
+│ A-1   | 01/03  | 15/03   | ⚠️ Hoy │
+│ A-2   | 05/03  | 19/03   | ✓ OK  │
+│ B-1   | 10/03  | 24/03   | ✓ OK  │
+└──────────────────────────────────┘
+
+[Registrar Muestreo] [Ver Histórico]
+Estas mejoras crean un sistema integrado donde toda la operación de la planta está digitalizada y trazada, desde que el camión entra por portería hasta que sale el producto final, manteniendo la trazabilidad completa para certificaciones y control de calidad.
