@@ -5,7 +5,6 @@ import MillManagement from "@/components/MillManagement";
 import ChacrasManagement from "@/components/ChacrasManagement";
 import EventsManagement from "@/components/EventsManagement";
 import CosechaManagement from "@/components/CosechaManagement";
-import PlantasySilos from "@/components/PlantasySilos";
 import TrazabilidadManagement from "@/components/TrazabilidadManagement";
 import EmptyStateCard from "@/components/EmptyStateCard";
 
@@ -17,7 +16,6 @@ export default function Dashboard() {
     { id: "chacras", label: "Gestión de Chacras y Polígonos" },
     { id: "eventos", label: "Eventos" },
     { id: "cosecha", label: "Cosecha" },
-    { id: "plantas", label: "Plantas y Silos" },
     { id: "trazabilidad", label: "Trazabilidad" },
   ];
 
@@ -45,12 +43,6 @@ export default function Dashboard() {
         return (
           <div className="max-w-7xl">
             <CosechaManagement />
-          </div>
-        );
-      case "plantas":
-        return (
-          <div className="max-w-full">
-            <PlantasySilos />
           </div>
         );
       case "trazabilidad":
