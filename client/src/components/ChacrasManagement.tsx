@@ -22,8 +22,8 @@ export default function ChacrasManagement() {
       name: "Don Timoteo",
       address: "Ruta 7 Km 125, Treinta y Tres",
       phone: "099 987 654",
-      owner: "Timoteo González López",
-      rut: "18.765.432-1",
+      owner: "Juan Carlos Rodríguez",
+      rut: "21.456.789-0",
       latitude: "-33.2341",
       longitude: "-54.3872",
       referenceCoordinates: "-33.2341, -54.3872"
