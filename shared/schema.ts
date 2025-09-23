@@ -20,6 +20,13 @@ export const mills = pgTable("mills", {
 export const establishments = pgTable("establishments", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
+  address: text("address").notNull(),
+  phone: text("phone"),
+  owner: text("owner").notNull(),
+  rut: text("rut").notNull(),
+  latitude: text("latitude"),
+  longitude: text("longitude"),
+  referenceCoordinates: text("reference_coordinates"),
 });
 
 export const chacras = pgTable("chacras", {

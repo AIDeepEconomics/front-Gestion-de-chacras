@@ -1,13 +1,34 @@
+import { useState } from "react";
 import MapTabs from "./MapTabs";
 import ChacrasTable from "./ChacrasTable";
-import { Chacra } from "@shared/schema";
+import { Chacra, Establishment } from "@shared/schema";
 
 export default function ChacrasManagement() {
   // todo: remove mock functionality - comprehensive mock data
-  const establishments = [
-    { id: "1", name: "La Juanita" },
-    { id: "2", name: "Don Timoteo" },
-  ];
+  const [establishments, setEstablishments] = useState<Establishment[]>([
+    { 
+      id: "1", 
+      name: "La Juanita",
+      address: "Ruta 8 Km 380",
+      phone: "099 123 456",
+      owner: "Juan Carlos Rodríguez",
+      rut: "21.456.789-0",
+      latitude: "-32.3054",
+      longitude: "-58.0836",
+      referenceCoordinates: "-32.3054, -58.0836"
+    },
+    { 
+      id: "2", 
+      name: "Don Timoteo",
+      address: "Ruta 7 Km 125, Treinta y Tres",
+      phone: "099 987 654",
+      owner: "Timoteo González López",
+      rut: "18.765.432-1",
+      latitude: "-33.2341",
+      longitude: "-54.3872",
+      referenceCoordinates: "-33.2341, -54.3872"
+    },
+  ]);
 
   const mockChacras: Chacra[] = [
     {
@@ -71,6 +92,14 @@ export default function ChacrasManagement() {
   const handleAddEstablishment = () => {
     console.log("Adding new establishment");
   };
+  
+  const handleUpdateEstablishment = (updatedEstablishment: Establishment) => {
+    setEstablishments(prev => 
+      prev.map(est => 
+        est.id === updatedEstablishment.id ? updatedEstablishment : est
+      )
+    );
+  };
 
   return (
     <div className="space-y-8">
@@ -81,6 +110,7 @@ export default function ChacrasManagement() {
         <MapTabs 
           establishments={establishments}
           onAddEstablishment={handleAddEstablishment}
+          onUpdateEstablishment={handleUpdateEstablishment}
         />
       </div>
       
