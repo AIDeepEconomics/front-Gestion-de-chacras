@@ -89,8 +89,8 @@ export default function ChacrasManagement() {
     }
   ];
 
-  const handleAddEstablishment = () => {
-    console.log("Adding new establishment");
+  const handleAddEstablishment = (newEstablishment: Establishment) => {
+    setEstablishments(prev => [...prev, newEstablishment]);
   };
   
   const handleUpdateEstablishment = (updatedEstablishment: Establishment) => {

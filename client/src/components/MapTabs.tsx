@@ -10,7 +10,7 @@ import { Establishment } from "@shared/schema";
 
 interface MapTabsProps {
   establishments: Establishment[];
-  onAddEstablishment?: () => void;
+  onAddEstablishment?: (newEstablishment: Establishment) => void;
   onUpdateEstablishment?: (establishment: Establishment) => void;
 }
 
@@ -19,12 +19,32 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingEstablishment, setEditingEstablishment] = useState<Establishment | null>(null);
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
   
   const currentEstablishment = establishments.find(e => e.id === activeTab);
   
   const handleViewEstablishment = (establishment: Establishment) => {
     setEditingEstablishment({ ...establishment });
     setIsEditing(false);
+    setIsCreatingNew(false);
+    setIsModalOpen(true);
+  };
+  
+  const handleCreateNewEstablishment = () => {
+    const newEstablishment: Establishment = {
+      id: '',
+      name: '',
+      address: '',
+      phone: '',
+      owner: '',
+      rut: '',
+      latitude: '',
+      longitude: '',
+      referenceCoordinates: ''
+    };
+    setEditingEstablishment(newEstablishment);
+    setIsEditing(true);
+    setIsCreatingNew(true);
     setIsModalOpen(true);
   };
   
@@ -33,18 +53,33 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
   };
   
   const handleSaveEstablishment = () => {
-    if (editingEstablishment && onUpdateEstablishment) {
-      onUpdateEstablishment(editingEstablishment);
+    if (editingEstablishment) {
+      if (isCreatingNew) {
+        // Generate a simple ID for new establishment
+        const newId = (establishments.length + 1).toString();
+        const newEstablishment = { ...editingEstablishment, id: newId };
+        if (onAddEstablishment) {
+          onAddEstablishment(newEstablishment);
+        }
+        // Switch to the new establishment tab
+        setActiveTab(newId);
+      } else if (onUpdateEstablishment) {
+        onUpdateEstablishment(editingEstablishment);
+      }
     }
     setIsEditing(false);
+    setIsCreatingNew(false);
     setIsModalOpen(false);
   };
   
   const handleCancelEdit = () => {
-    if (currentEstablishment) {
+    if (isCreatingNew) {
+      setEditingEstablishment(null);
+    } else if (currentEstablishment) {
       setEditingEstablishment({ ...currentEstablishment });
     }
     setIsEditing(false);
+    setIsCreatingNew(false);
   };
 
   const tabs = [
@@ -67,9 +102,8 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
             }`}
             onClick={() => {
               setActiveTab(tab.id);
-              if (tab.id === "new" && onAddEstablishment) {
-                console.log("Add new establishment clicked");
-                onAddEstablishment();
+              if (tab.id === "new") {
+                handleCreateNewEstablishment();
               }
             }}
             data-testid={`tab-establishment-${tab.id}`}
@@ -145,8 +179,17 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5" />
-              Información del Establecimiento
+              {isCreatingNew ? (
+                <>
+                  <Plus className="h-5 w-5" />
+                  Nuevo Establecimiento
+                </>
+              ) : (
+                <>
+                  <Eye className="h-5 w-5" />
+                  Información del Establecimiento
+                </>
+              )}
             </DialogTitle>
           </DialogHeader>
           
@@ -233,17 +276,19 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
                       onClick={handleSaveEstablishment}
                       data-testid="button-save-establishment"
                     >
-                      Guardar
+                      {isCreatingNew ? 'Crear' : 'Guardar'}
                     </Button>
                   </>
                 ) : (
-                  <Button 
-                    onClick={handleEditEstablishment}
-                    data-testid="button-edit-establishment"
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Editar
-                  </Button>
+                  !isCreatingNew && (
+                    <Button 
+                      onClick={handleEditEstablishment}
+                      data-testid="button-edit-establishment"
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
+                  )
                 )}
               </div>
             </div>
