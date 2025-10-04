@@ -2,7 +2,12 @@
 
 ## Overview
 
-A rice traceability portal designed for rural producers to manage their agricultural operations. The system provides comprehensive tracking of rice farms (chacras), field events, and mill relationships through a professional dashboard interface. The application enables producers to register their rural establishments, manage field plots, track agricultural events (fertilization, planting, harvest), and coordinate with associated mills for rice processing and distribution.
+A rice traceability portal designed for rural producers and mill workers to manage agricultural operations. The system provides comprehensive tracking of rice farms (chacras), field events, and mill relationships through a professional dashboard interface. The application serves two user types:
+
+- **Rural Producers**: Manage their establishments, field plots, and agricultural events. They control what information to share with associated mills.
+- **Mill Workers**: Access shared information from multiple producers based on granted permissions, manage harvest data, and coordinate rice collection.
+
+The application includes mock user switching functionality to demonstrate different user perspectives during development.
 
 ## User Preferences
 
@@ -47,9 +52,18 @@ The system models agricultural operations through interconnected entities:
 - **Accessibility**: ARIA compliance through Radix UI primitives
 
 ### Key Features Implementation
+- **Mock User System**: Switchable user context demonstrating producer vs. mill worker perspectives
+  - Juan Carlos Rodríguez (Rural Producer): Full access to establishment and mill management
+  - María González (Mill Worker - Molino Los Pinos): Access to associated producer data based on permissions
 - **Mill Management**: Dynamic addition/removal of associated mills with granular permission controls
 - **Field Management**: Interactive maps (mockup), tabular data with sorting and filtering
+- **Event Registration**: Context-aware forms with specific fields for different event types
+  - Fertilization: Type selection (Urea, DAP, NPK) and dosage tracking
+  - Planting: Seed variety (El Paso 144, INIA Merín) and density
+  - Application: Product category (herbicide, insecticide, fungicide) with Uruguay-specific products
+  - Harvest: Yield tracking (ton/ha)
 - **Event Timeline**: Visual timeline representation with zafra-based organization
+- **Harvest Management**: Remito (delivery note) generation with automatic chacra selection
 - **Data Sharing**: Configurable sharing of field management, harvest data, and traceability information with mills
 
 ## External Dependencies
