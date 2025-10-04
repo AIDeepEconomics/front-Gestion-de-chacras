@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Map, Plus, Eye, Edit, Phone, MapPin } from "lucide-react";
+import { Map, Plus, Eye, Edit, Phone, MapPin, Info } from "lucide-react";
 import { Establishment } from "@shared/schema";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 
 interface MapTabsProps {
@@ -20,6 +26,8 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
   const [isEditing, setIsEditing] = useState(false);
   const [editingEstablishment, setEditingEstablishment] = useState<Establishment | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [pendingEstablishment, setPendingEstablishment] = useState<Establishment | null>(null);
   
   const currentEstablishment = establishments.find(e => e.id === activeTab);
   
@@ -40,7 +48,8 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
       rut: '',
       latitude: '',
       longitude: '',
-      referenceCoordinates: ''
+      referenceCoordinates: '',
+      adminEmail: null
     };
     setEditingEstablishment(newEstablishment);
     setIsEditing(true);
@@ -53,23 +62,32 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
   };
   
   const handleSaveEstablishment = () => {
-    if (editingEstablishment) {
+    if (editingEstablishment && editingEstablishment.adminEmail && editingEstablishment.adminEmail.trim()) {
+      setPendingEstablishment(editingEstablishment);
+      setIsConfirmationOpen(true);
+    } else {
+      confirmSaveEstablishment(editingEstablishment);
+    }
+  };
+
+  const confirmSaveEstablishment = (establishment: Establishment | null) => {
+    if (establishment) {
       if (isCreatingNew) {
-        // Generate a simple ID for new establishment
         const newId = (establishments.length + 1).toString();
-        const newEstablishment = { ...editingEstablishment, id: newId };
+        const newEstablishment = { ...establishment, id: newId };
         if (onAddEstablishment) {
           onAddEstablishment(newEstablishment);
         }
-        // Switch to the new establishment tab
         setActiveTab(newId);
       } else if (onUpdateEstablishment) {
-        onUpdateEstablishment(editingEstablishment);
+        onUpdateEstablishment(establishment);
       }
     }
     setIsEditing(false);
     setIsCreatingNew(false);
     setIsModalOpen(false);
+    setIsConfirmationOpen(false);
+    setPendingEstablishment(null);
   };
   
   const handleCancelEdit = () => {
@@ -261,6 +279,46 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
                   data-testid="input-establishment-coordinates"
                 />
               </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="adminEmail">Asignar Usuario como Administrador</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-5 w-5 p-0"
+                          data-testid="button-admin-info"
+                        >
+                          <Info className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-sm">
+                        <p>
+                          Designar un Usuario como administrador de este establecimiento hará que el establecimiento 
+                          aparezca en la sesión de ese usuario, el cual podrá editar y controlar todo el establecimiento. 
+                          Por default, usted mantendrá todos los permisos para también editar el establecimiento, pero 
+                          el usuario administrador puede retirarle los permisos luego si lo desea. Esta opción es útil 
+                          si usted quiere subir la información de un establecimiento de un productor para ahorrarle el 
+                          trabajo al mismo, pudiéndole entregar el control del mismo luego.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <Input
+                  id="adminEmail"
+                  type="email"
+                  value={editingEstablishment.adminEmail || ''}
+                  onChange={(e) => setEditingEstablishment({...editingEstablishment, adminEmail: e.target.value})}
+                  disabled={!isEditing}
+                  placeholder="email@ejemplo.com"
+                  data-testid="input-establishment-admin-email"
+                />
+              </div>
               
               <div className="flex justify-end gap-2 pt-4">
                 {isEditing ? (
@@ -293,6 +351,38 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Confirmación de Asignación de Administrador */}
+      <Dialog open={isConfirmationOpen} onOpenChange={setIsConfirmationOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirmar Asignación de Administrador</DialogTitle>
+            <DialogDescription>
+              ¿Está seguro que desea asignar el email{' '}
+              <span className="font-semibold">{pendingEstablishment?.adminEmail}</span>{' '}
+              como administrador de este establecimiento?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setIsConfirmationOpen(false);
+                setPendingEstablishment(null);
+              }}
+              data-testid="button-cancel-confirmation"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => confirmSaveEstablishment(pendingEstablishment)}
+              data-testid="button-confirm-admin-assignment"
+            >
+              Confirmar
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
