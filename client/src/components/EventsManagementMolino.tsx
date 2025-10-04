@@ -47,6 +47,46 @@ export default function EventsManagementMolino() {
       regime: "propiedad",
       establishmentId: "2", 
       establishmentName: "Don Timoteo"
+    },
+    {
+      id: "8",
+      name: "Sector Norte",
+      area: "145.3",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "9",
+      name: "Parcela Industrial A",
+      area: "98.7",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "10",
+      name: "Zona de Almacenamiento",
+      area: "112.4",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "11",
+      name: "Campo Experimental",
+      area: "87.6",
+      regime: "arrendamiento",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "12",
+      name: "Predio Auxiliar",
+      area: "134.2",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
     }
   ];
 

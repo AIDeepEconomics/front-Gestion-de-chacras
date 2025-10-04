@@ -32,7 +32,7 @@ export default function ChacrasManagementMolino() {
     },
     { 
       id: "3", 
-      name: "Molino Los Pinos - Planta Central",
+      name: "Los Pinos",
       address: "Parque Industrial Ruta 5 Km 280, Durazno",
       phone: "099 555 777",
       owner: "Molino Los Pinos S.A.",
@@ -103,6 +103,46 @@ export default function ChacrasManagementMolino() {
       regime: "propiedad", 
       establishmentId: "1",
       establishmentName: "La Juanita"
+    },
+    {
+      id: "8",
+      name: "Sector Norte",
+      area: "145.3",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "9",
+      name: "Parcela Industrial A",
+      area: "98.7",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "10",
+      name: "Zona de Almacenamiento",
+      area: "112.4",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "11",
+      name: "Campo Experimental",
+      area: "87.6",
+      regime: "arrendamiento",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
+    },
+    {
+      id: "12",
+      name: "Predio Auxiliar",
+      area: "134.2",
+      regime: "propiedad",
+      establishmentId: "3",
+      establishmentName: "Los Pinos"
     }
   ];
 
