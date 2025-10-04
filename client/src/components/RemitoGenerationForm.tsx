@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -103,6 +103,40 @@ export default function RemitoGenerationForm({ onSubmit, selectedChacras, chacra
   };
 
   const watchedRows = form.watch("remitoRows");
+
+  // Auto-fill chacra selection when selectedChacras changes
+  useEffect(() => {
+    const currentRows = form.getValues("remitoRows");
+    let updated = false;
+    
+    // Find rows that don't have a chacra selected yet
+    const updatedRows = currentRows.map((row, index) => {
+      // Skip if this row already has a chacra selected
+      if (row.chacraId && row.chacraId.trim() !== '') {
+        return row;
+      }
+      
+      // Find a selected chacra that hasn't been assigned to any row yet
+      const assignedChacras = currentRows
+        .filter((r, i) => i !== index && r.chacraId && r.chacraId.trim() !== '')
+        .map(r => r.chacraId);
+      
+      const availableChacra = selectedChacras.find(
+        chacraId => !assignedChacras.includes(chacraId)
+      );
+      
+      if (availableChacra) {
+        updated = true;
+        return { ...row, chacraId: availableChacra };
+      }
+      
+      return row;
+    });
+    
+    if (updated) {
+      form.setValue("remitoRows", updatedRows);
+    }
+  }, [selectedChacras, form]);
 
   return (
     <Card className="w-full">
