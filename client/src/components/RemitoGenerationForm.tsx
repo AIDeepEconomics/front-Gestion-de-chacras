@@ -8,13 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Truck, Plus, Minus } from "lucide-react";
+import { Chacra } from "@shared/schema";
 
 const remitoRowSchema = z.object({
-  truckMaxTonnage: z.number().min(1, "El tonelaje máximo es requerido"),
-  loadedTonnage: z.number().min(1, "La cantidad de toneladas es requerida"),
-  quantityRemitos: z.number().min(1, "La cantidad de remitos es requerida").max(999, "Máximo 999 remitos"),
+  estimatedWeight: z.number().min(1, "El peso estimado es requerido"),
+  trailerPlate: z.string().min(1, "La matrícula de la zorra es requerida"),
+  driverName: z.string().min(1, "El nombre del camionero es requerido"),
   driverWhatsapp: z.string().min(1, "El WhatsApp del camionero es requerido"),
-  industrialPlantId: z.string().min(1, "La planta industrial es requerida")
+  industrialPlantId: z.string().min(1, "La planta industrial es requerida"),
+  chacraId: z.string().optional()
 });
 
 const remitoFormSchema = z.object({
@@ -27,17 +29,9 @@ export type RemitoRowData = z.infer<typeof remitoRowSchema>;
 interface RemitoGenerationFormProps {
   onSubmit: (data: RemitoFormData) => void;
   selectedChacras: string[];
+  chacras: Chacra[];
 }
 
-// Standard truck tonnage options used in the industry
-const truckTonnageOptions = [
-  { value: 15, label: "15 toneladas" },
-  { value: 20, label: "20 toneladas" },
-  { value: 25, label: "25 toneladas" },
-  { value: 30, label: "30 toneladas" },
-  { value: 35, label: "35 toneladas" },
-  { value: 40, label: "40 toneladas" }
-];
 
 // Mock industrial plants data
 export const mockIndustrialPlants = [
@@ -47,18 +41,19 @@ export const mockIndustrialPlants = [
   { id: "4", name: "Planta Industrial del Norte", location: "Tacuarembó" }
 ];
 
-export default function RemitoGenerationForm({ onSubmit, selectedChacras }: RemitoGenerationFormProps) {
+export default function RemitoGenerationForm({ onSubmit, selectedChacras, chacras }: RemitoGenerationFormProps) {
   const [remitoRowsCount, setRemitoRowsCount] = useState(1);
 
   const form = useForm<RemitoFormData>({
     resolver: zodResolver(remitoFormSchema),
     defaultValues: {
       remitoRows: [{
-        truckMaxTonnage: 0,
-        loadedTonnage: 0,
-        quantityRemitos: 1,
+        estimatedWeight: 0,
+        trailerPlate: "",
+        driverName: "",
         driverWhatsapp: "",
-        industrialPlantId: ""
+        industrialPlantId: "",
+        chacraId: ""
       }]
     }
   });
@@ -70,11 +65,12 @@ export default function RemitoGenerationForm({ onSubmit, selectedChacras }: Remi
       form.setValue("remitoRows", [
         ...currentRows,
         {
-          truckMaxTonnage: 0,
-          loadedTonnage: 0,
-          quantityRemitos: 1,
+          estimatedWeight: 0,
+          trailerPlate: "",
+          driverName: "",
           driverWhatsapp: "",
-          industrialPlantId: ""
+          industrialPlantId: "",
+          chacraId: ""
         }
       ]);
     }
@@ -90,8 +86,11 @@ export default function RemitoGenerationForm({ onSubmit, selectedChacras }: Remi
   };
 
   const handleSubmit = (data: RemitoFormData) => {
-    if (selectedChacras.length === 0) {
-      alert("Debe seleccionar al menos una chacra en la tabla de abajo");
+    // Check if at least one remito row has a chacra selected
+    const hasChacraSelected = data.remitoRows.some(row => row.chacraId && row.chacraId.trim() !== '');
+    
+    if (!hasChacraSelected) {
+      alert("Debe seleccionar una chacra para al menos un remito");
       return;
     }
 
@@ -137,29 +136,41 @@ export default function RemitoGenerationForm({ onSubmit, selectedChacras }: Remi
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    {/* Truck Max Tonnage */}
+                  {/* Display selected chacra if exists */}
+                  {watchedRows[index]?.chacraId && (
+                    <div className="bg-muted/30 rounded-md p-3 mb-4">
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium">Chacra seleccionada:</span>{' '}
+                        {chacras.find(c => c.id === watchedRows[index]?.chacraId)?.name || 'N/A'}
+                        {' - '}
+                        {chacras.find(c => c.id === watchedRows[index]?.chacraId)?.area} ha
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Chacra Selection */}
                     <FormField
                       control={form.control}
-                      name={`remitoRows.${index}.truckMaxTonnage` as const}
+                      name={`remitoRows.${index}.chacraId` as const}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Tonelaje Máximo</FormLabel>
-                          <Select 
-                            onValueChange={(value) => field.onChange(parseInt(value))}
-                            value={field.value?.toString() || ""}
-                          >
+                          <FormLabel>Chacra de Origen</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
-                              <SelectTrigger data-testid={`select-max-tonnage-${index}`}>
-                                <SelectValue placeholder="Seleccionar..." />
+                              <SelectTrigger data-testid={`select-chacra-${index}`}>
+                                <SelectValue placeholder="Seleccionar chacra..." />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {truckTonnageOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value.toString()}>
-                                  {option.label}
-                                </SelectItem>
-                              ))}
+                              {selectedChacras.map((chacraId) => {
+                                const chacra = chacras.find(c => c.id === chacraId);
+                                return chacra ? (
+                                  <SelectItem key={chacra.id} value={chacra.id}>
+                                    {chacra.name} ({chacra.area} ha)
+                                  </SelectItem>
+                                ) : null;
+                              })}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -167,20 +178,20 @@ export default function RemitoGenerationForm({ onSubmit, selectedChacras }: Remi
                       )}
                     />
 
-                    {/* Loaded Tonnage */}
+                    {/* Estimated Weight */}
                     <FormField
                       control={form.control}
-                      name={`remitoRows.${index}.loadedTonnage` as const}
+                      name={`remitoRows.${index}.estimatedWeight` as const}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Toneladas a Cargar</FormLabel>
+                          <FormLabel>Peso Estimado (ton)</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
                               min="1"
-                              max={watchedRows[index]?.truckMaxTonnage || 999}
+                              max="999"
                               placeholder="Ej: 25"
-                              data-testid={`input-loaded-tonnage-${index}`}
+                              data-testid={`input-estimated-weight-${index}`}
                               {...field}
                               onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                               value={field.value || ""}
@@ -191,23 +202,39 @@ export default function RemitoGenerationForm({ onSubmit, selectedChacras }: Remi
                       )}
                     />
 
-                    {/* Quantity of Remitos */}
+                    {/* Trailer Plate */}
                     <FormField
                       control={form.control}
-                      name={`remitoRows.${index}.quantityRemitos` as const}
+                      name={`remitoRows.${index}.trailerPlate` as const}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Cantidad de Remitos</FormLabel>
+                          <FormLabel>Matrícula de la Zorra</FormLabel>
                           <FormControl>
                             <Input
-                              type="number"
-                              min="1"
-                              max="999"
-                              placeholder="Ej: 3"
-                              data-testid={`input-quantity-remitos-${index}`}
+                              type="text"
+                              placeholder="Ej: SAA 1234"
+                              data-testid={`input-trailer-plate-${index}`}
                               {...field}
-                              onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Driver Name */}
+                    <FormField
+                      control={form.control}
+                      name={`remitoRows.${index}.driverName` as const}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nombre del Camionero</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="text"
+                              placeholder="Ej: Juan Pérez"
+                              data-testid={`input-driver-name-${index}`}
+                              {...field}
                             />
                           </FormControl>
                           <FormMessage />

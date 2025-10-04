@@ -71,8 +71,9 @@ export const remitos = pgTable("remitos", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   chacraId: varchar("chacra_id").references(() => chacras.id).notNull(),
   chacraName: text("chacra_name").notNull(), // denormalized
-  truckMaxTonnage: integer("truck_max_tonnage").notNull(),
-  loadedTonnage: integer("loaded_tonnage").notNull(),
+  estimatedWeight: integer("estimated_weight").notNull(),
+  trailerPlate: text("trailer_plate").notNull(),
+  driverName: text("driver_name").notNull(),
   driverWhatsapp: text("driver_whatsapp").notNull(),
   industrialPlantId: varchar("industrial_plant_id").references(() => industrialPlants.id).notNull(),
   industrialPlantName: text("industrial_plant_name").notNull(), // denormalized

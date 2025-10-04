@@ -73,8 +73,9 @@ export default function CosechaManagement() {
       id: "r1",
       chacraId: "1",
       chacraName: "Chacra Norte",
-      truckMaxTonnage: 30,
-      loadedTonnage: 28,
+      estimatedWeight: 28,
+      trailerPlate: "SAA 1234",
+      driverName: "Carlos González",
       driverWhatsapp: "+59899123456",
       industrialPlantId: "1",
       industrialPlantName: "Planta Arrocera del Este",
@@ -89,8 +90,9 @@ export default function CosechaManagement() {
       id: "r2",
       chacraId: "2",
       chacraName: "Campo Sur", 
-      truckMaxTonnage: 25,
-      loadedTonnage: 24,
+      estimatedWeight: 24,
+      trailerPlate: "SBB 5678",
+      driverName: "Juan Pérez",
       driverWhatsapp: "+59899234567",
       industrialPlantId: "2",
       industrialPlantName: "Molino San Fernando",
@@ -105,8 +107,9 @@ export default function CosechaManagement() {
       id: "r3",
       chacraId: "3",
       chacraName: "Potrero Este",
-      truckMaxTonnage: 35,
-      loadedTonnage: 33,
+      estimatedWeight: 33,
+      trailerPlate: "SCC 9012",
+      driverName: "Roberto Silva",
       driverWhatsapp: "+59899345678",
       industrialPlantId: "1",
       industrialPlantName: "Planta Arrocera del Este",
@@ -121,8 +124,9 @@ export default function CosechaManagement() {
       id: "r4",
       chacraId: "4",
       chacraName: "Bajo Inundable",
-      truckMaxTonnage: 20,
-      loadedTonnage: 18,
+      estimatedWeight: 18,
+      trailerPlate: "SDD 3456",
+      driverName: "Miguel Fernández",
       driverWhatsapp: "+59899456789",
       industrialPlantId: "3",
       industrialPlantName: "Cooperativa Arrocera",
@@ -137,8 +141,9 @@ export default function CosechaManagement() {
       id: "r5",
       chacraId: "1",
       chacraName: "Chacra Norte",
-      truckMaxTonnage: 30,
-      loadedTonnage: 29,
+      estimatedWeight: 29,
+      trailerPlate: "SEE 7890",
+      driverName: "Diego Martínez",
       driverWhatsapp: "+59899567890",
       industrialPlantId: "4",
       industrialPlantName: "Planta Industrial del Norte",
@@ -153,8 +158,9 @@ export default function CosechaManagement() {
       id: "r6",
       chacraId: "5",
       chacraName: "Loma Alta",
-      truckMaxTonnage: 25,
-      loadedTonnage: 22,
+      estimatedWeight: 22,
+      trailerPlate: "SFF 2345",
+      driverName: "Fernando López",
       driverWhatsapp: "+59899678901",
       industrialPlantId: "2",
       industrialPlantName: "Molino San Fernando",
@@ -173,44 +179,35 @@ export default function CosechaManagement() {
   }, []);
 
   const handleRemitoGeneration = (formData: RemitoFormData) => {
-    if (selectedChacras.length === 0) {
-      alert("Debe seleccionar al menos una chacra en la tabla de abajo");
-      return;
-    }
-    
-    // Generate remitos for each selected chacra and each form row
     const newRemitos: Remito[] = [];
     const currentTimestamp = new Date().toISOString();
     
-    selectedChacras.forEach(chacraId => {
-      const chacra = mockChacras.find(c => c.id === chacraId);
+    // Process each remito row from the form
+    formData.remitoRows.forEach((rowData, rowIndex) => {
+      const plant = mockIndustrialPlants.find(p => p.id === rowData.industrialPlantId);
+      const chacra = rowData.chacraId ? mockChacras.find(c => c.id === rowData.chacraId) : null;
+      
+      // Skip if no chacra selected for this row
       if (!chacra) return;
       
-      // Process each remito row from the form
-      formData.remitoRows.forEach((rowData, rowIndex) => {
-        const plant = mockIndustrialPlants.find(p => p.id === rowData.industrialPlantId);
-        
-        // Create the specified quantity of remitos for this chacra and row
-        for (let i = 0; i < rowData.quantityRemitos; i++) {
-          const newRemito: Remito = {
-            id: `remito-${Date.now()}-${chacraId}-${rowIndex}-${i}`,
-            chacraId: chacraId,
-            chacraName: chacra.name,
-            truckMaxTonnage: rowData.truckMaxTonnage,
-            loadedTonnage: rowData.loadedTonnage, // From form input
-            driverWhatsapp: rowData.driverWhatsapp,
-            industrialPlantId: rowData.industrialPlantId,
-            industrialPlantName: plant?.name || "Planta no encontrada",
-            destinationSilo: null, // Will be assigned at plant
-            status: "creandose",
-            createdAt: currentTimestamp,
-            departureDateTime: null,
-            arrivalDateTime: null,
-            notes: null
-          };
-          newRemitos.push(newRemito);
-        }
-      });
+      const newRemito: Remito = {
+        id: `remito-${Date.now()}-${rowData.chacraId}-${rowIndex}`,
+        chacraId: chacra.id,
+        chacraName: chacra.name,
+        estimatedWeight: rowData.estimatedWeight,
+        trailerPlate: rowData.trailerPlate,
+        driverName: rowData.driverName,
+        driverWhatsapp: rowData.driverWhatsapp,
+        industrialPlantId: rowData.industrialPlantId,
+        industrialPlantName: plant?.name || "Planta no encontrada",
+        destinationSilo: null,
+        status: "creandose",
+        createdAt: currentTimestamp,
+        departureDateTime: null,
+        arrivalDateTime: null,
+        notes: null
+      };
+      newRemitos.push(newRemito);
     });
     
     // Add new remitos to state
@@ -218,7 +215,7 @@ export default function CosechaManagement() {
     
     // Clear selections after successful generation
     setSelectedChacras([]);
-    alert(`${newRemitos.length} remitos generados exitosamente!`);
+    alert(`${newRemitos.length} remito${newRemitos.length > 1 ? 's' : ''} generado${newRemitos.length > 1 ? 's' : ''} exitosamente!`);
   };
 
   const handleChacraSelectionChange = (chacraId: string, selected: boolean) => {
@@ -240,6 +237,7 @@ export default function CosechaManagement() {
         <RemitoGenerationForm 
           onSubmit={handleRemitoGeneration}
           selectedChacras={selectedChacras}
+          chacras={mockChacras}
         />
       </div>
       
