@@ -113,6 +113,7 @@ export default function ChacrasManagementProductor() {
           establishments={establishments}
           onAddEstablishment={handleAddEstablishment}
           onUpdateEstablishment={handleUpdateEstablishment}
+          showAdminAssignment={false}
         />
       </div>
       

@@ -20,9 +20,10 @@ interface MapTabsProps {
   onAddEstablishment?: (newEstablishment: Establishment) => void;
   onUpdateEstablishment?: (establishment: Establishment) => void;
   sharedEstablishmentIds?: string[];
+  showAdminAssignment?: boolean;
 }
 
-export default function MapTabs({ establishments, onAddEstablishment, onUpdateEstablishment, sharedEstablishmentIds = [] }: MapTabsProps) {
+export default function MapTabs({ establishments, onAddEstablishment, onUpdateEstablishment, sharedEstablishmentIds = [], showAdminAssignment = true }: MapTabsProps) {
   const [activeTab, setActiveTab] = useState(establishments[0]?.id || "new");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -303,45 +304,47 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
                 />
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Label htmlFor="adminEmail">Asignar Usuario como Administrador</Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button 
-                          type="button" 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-5 w-5 p-0"
-                          data-testid="button-admin-info"
-                        >
-                          <Info className="h-4 w-4 text-muted-foreground" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-sm">
-                        <p>
-                          Designar un Usuario como administrador de este establecimiento hará que el establecimiento 
-                          aparezca en la sesión de ese usuario, el cual podrá editar y controlar todo el establecimiento. 
-                          Por default, usted mantendrá todos los permisos para también editar el establecimiento, pero 
-                          el usuario administrador puede retirarle los permisos luego si lo desea. Esta opción es útil 
-                          si usted quiere subir la información de un establecimiento de un productor para ahorrarle el 
-                          trabajo al mismo, pudiéndole entregar el control del mismo luego.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+              {showAdminAssignment && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="adminEmail">Asignar Usuario como Administrador</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            type="button" 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-5 w-5 p-0"
+                            data-testid="button-admin-info"
+                          >
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm">
+                          <p>
+                            Designar un Usuario como administrador de este establecimiento hará que el establecimiento 
+                            aparezca en la sesión de ese usuario, el cual podrá editar y controlar todo el establecimiento. 
+                            Por default, usted mantendrá todos los permisos para también editar el establecimiento, pero 
+                            el usuario administrador puede retirarle los permisos luego si lo desea. Esta opción es útil 
+                            si usted quiere subir la información de un establecimiento de un productor para ahorrarle el 
+                            trabajo al mismo, pudiéndole entregar el control del mismo luego.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <Input
+                    id="adminEmail"
+                    type="email"
+                    value={editingEstablishment.adminEmail || ''}
+                    onChange={(e) => setEditingEstablishment({...editingEstablishment, adminEmail: e.target.value})}
+                    disabled={!isEditing}
+                    placeholder="email@ejemplo.com"
+                    data-testid="input-establishment-admin-email"
+                  />
                 </div>
-                <Input
-                  id="adminEmail"
-                  type="email"
-                  value={editingEstablishment.adminEmail || ''}
-                  onChange={(e) => setEditingEstablishment({...editingEstablishment, adminEmail: e.target.value})}
-                  disabled={!isEditing}
-                  placeholder="email@ejemplo.com"
-                  data-testid="input-establishment-admin-email"
-                />
-              </div>
+              )}
               
               <div className="flex justify-end gap-2 pt-4">
                 {isEditing ? (
