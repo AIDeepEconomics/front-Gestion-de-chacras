@@ -1,14 +1,34 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useState } from "react";
 import MapTabs from "./MapTabs";
 import ChacrasTable from "./ChacrasTable";
 import { Chacra, Establishment } from "@shared/schema";
 
 export default function ChacrasManagement() {
-  // Fetch establishments from backend
-  const { data: establishments = [], isLoading } = useQuery<Establishment[]>({
-    queryKey: ["/api/establishments"],
-  });
+  // todo: remove mock functionality - comprehensive mock data
+  const [establishments, setEstablishments] = useState<Establishment[]>([
+    { 
+      id: "1", 
+      name: "La Juanita",
+      address: "Ruta 8 Km 380",
+      phone: "099 123 456",
+      owner: "Juan Carlos Rodríguez",
+      rut: "21.456.789-0",
+      latitude: "-32.3054",
+      longitude: "-58.0836",
+      referenceCoordinates: "-32.3054, -58.0836"
+    },
+    { 
+      id: "2", 
+      name: "Don Timoteo",
+      address: "Ruta 7 Km 125, Treinta y Tres",
+      phone: "099 987 654",
+      owner: "Juan Carlos Rodríguez",
+      rut: "21.456.789-0",
+      latitude: "-33.2341",
+      longitude: "-54.3872",
+      referenceCoordinates: "-33.2341, -54.3872"
+    },
+  ]);
 
   const mockChacras: Chacra[] = [
     {
@@ -69,37 +89,16 @@ export default function ChacrasManagement() {
     }
   ];
 
-  // Create establishment mutation
-  const createMutation = useMutation({
-    mutationFn: async (newEstablishment: Omit<Establishment, 'id'>) => {
-      const res = await apiRequest("POST", "/api/establishments", newEstablishment);
-      return await res.json();
-    },
-    onSuccess: (data: Establishment) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/establishments"] });
-      // Notify MapTabs of the new establishment ID if needed
-      return data;
-    },
-  });
-
-  // Update establishment mutation
-  const updateMutation = useMutation({
-    mutationFn: async (updatedEstablishment: Establishment) => {
-      const res = await apiRequest("PATCH", `/api/establishments/${updatedEstablishment.id}`, updatedEstablishment);
-      return await res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/establishments"] });
-    },
-  });
-
   const handleAddEstablishment = (newEstablishment: Establishment) => {
-    const { id, ...establishmentData } = newEstablishment;
-    createMutation.mutate(establishmentData);
+    setEstablishments(prev => [...prev, newEstablishment]);
   };
   
   const handleUpdateEstablishment = (updatedEstablishment: Establishment) => {
-    updateMutation.mutate(updatedEstablishment);
+    setEstablishments(prev => 
+      prev.map(est => 
+        est.id === updatedEstablishment.id ? updatedEstablishment : est
+      )
+    );
   };
 
   return (

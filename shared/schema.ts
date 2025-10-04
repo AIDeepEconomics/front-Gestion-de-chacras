@@ -27,7 +27,6 @@ export const establishments = pgTable("establishments", {
   latitude: text("latitude"),
   longitude: text("longitude"),
   referenceCoordinates: text("reference_coordinates"),
-  adminEmail: text("admin_email"),
 });
 
 export const chacras = pgTable("chacras", {
