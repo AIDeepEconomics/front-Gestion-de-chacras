@@ -36,7 +36,7 @@ export default function EventsManagementProductor() {
       id: "3",
       name: "Potrero Este",
       area: "203.7",
-      regime: "gestionando para terceros", 
+      regime: "propiedad", 
       establishmentId: "2",
       establishmentName: "Don Timoteo"
     },

@@ -68,7 +68,7 @@ export default function ChacrasManagementMolino() {
       id: "3",
       name: "Potrero Este",
       area: "203.7",
-      regime: "gestionando para terceros", 
+      regime: "propiedad", 
       establishmentId: "2",
       establishmentName: "Don Timoteo"
     },
@@ -92,7 +92,7 @@ export default function ChacrasManagementMolino() {
       id: "6",
       name: "Campo Nuevo",
       area: "92.1",
-      regime: "gestionando para terceros",
+      regime: "propiedad",
       establishmentId: "2",
       establishmentName: "Don Timoteo"
     },
