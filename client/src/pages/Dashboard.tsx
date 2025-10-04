@@ -2,10 +2,14 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import TabNavigation from "@/components/TabNavigation";
 import MillManagement from "@/components/MillManagement";
-import ChacrasManagement from "@/components/ChacrasManagement";
-import EventsManagement from "@/components/EventsManagement";
-import CosechaManagement from "@/components/CosechaManagement";
-import TrazabilidadManagement from "@/components/TrazabilidadManagement";
+import ChacrasManagementProductor from "@/components/ChacrasManagementProductor";
+import ChacrasManagementMolino from "@/components/ChacrasManagementMolino";
+import EventsManagementProductor from "@/components/EventsManagementProductor";
+import EventsManagementMolino from "@/components/EventsManagementMolino";
+import CosechaManagementProductor from "@/components/CosechaManagementProductor";
+import CosechaManagementMolino from "@/components/CosechaManagementMolino";
+import TrazabilidadManagementProductor from "@/components/TrazabilidadManagementProductor";
+import TrazabilidadManagementMolino from "@/components/TrazabilidadManagementMolino";
 import EmptyStateCard from "@/components/EmptyStateCard";
 import { useUser } from "@/contexts/UserContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -86,25 +90,25 @@ export default function Dashboard() {
       case "chacras":
         return (
           <div className="max-w-6xl">
-            <ChacrasManagement />
+            {isProductor ? <ChacrasManagementProductor /> : <ChacrasManagementMolino />}
           </div>
         );
       case "eventos":
         return (
           <div className="max-w-7xl">
-            <EventsManagement />
+            {isProductor ? <EventsManagementProductor /> : <EventsManagementMolino />}
           </div>
         );
       case "cosecha":
         return (
           <div className="max-w-7xl">
-            <CosechaManagement />
+            {isProductor ? <CosechaManagementProductor /> : <CosechaManagementMolino />}
           </div>
         );
       case "trazabilidad":
         return (
           <div className="max-w-7xl">
-            <TrazabilidadManagement />
+            {isProductor ? <TrazabilidadManagementProductor /> : <TrazabilidadManagementMolino />}
           </div>
         );
       default:
