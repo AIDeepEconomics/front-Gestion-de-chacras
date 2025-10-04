@@ -30,7 +30,22 @@ export default function ChacrasManagementMolino() {
       referenceCoordinates: "-33.2341, -54.3872",
       adminEmail: null
     },
+    { 
+      id: "3", 
+      name: "Molino Los Pinos - Planta Central",
+      address: "Parque Industrial Ruta 5 Km 280, Durazno",
+      phone: "099 555 777",
+      owner: "Molino Los Pinos S.A.",
+      rut: "21.789.456-0",
+      latitude: "-33.3856",
+      longitude: "-56.5242",
+      referenceCoordinates: "-33.3856, -56.5242",
+      adminEmail: null
+    },
   ]);
+
+  // IDs de establecimientos compartidos por productores (no son del molino)
+  const sharedEstablishmentIds = ["1", "2"];
 
   const mockChacras: Chacra[] = [
     {
@@ -113,6 +128,7 @@ export default function ChacrasManagementMolino() {
           establishments={establishments}
           onAddEstablishment={handleAddEstablishment}
           onUpdateEstablishment={handleUpdateEstablishment}
+          sharedEstablishmentIds={sharedEstablishmentIds}
         />
       </div>
       

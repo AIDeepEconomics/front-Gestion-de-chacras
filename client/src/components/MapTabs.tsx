@@ -4,8 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Map, Plus, Eye, Edit, Phone, MapPin, Info } from "lucide-react";
+import { Map, Plus, Eye, Edit, Phone, MapPin, Info, Share2 } from "lucide-react";
 import { Establishment } from "@shared/schema";
+import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -18,9 +19,10 @@ interface MapTabsProps {
   establishments: Establishment[];
   onAddEstablishment?: (newEstablishment: Establishment) => void;
   onUpdateEstablishment?: (establishment: Establishment) => void;
+  sharedEstablishmentIds?: string[];
 }
 
-export default function MapTabs({ establishments, onAddEstablishment, onUpdateEstablishment }: MapTabsProps) {
+export default function MapTabs({ establishments, onAddEstablishment, onUpdateEstablishment, sharedEstablishmentIds = [] }: MapTabsProps) {
   const [activeTab, setActiveTab] = useState(establishments[0]?.id || "new");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -109,57 +111,78 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
     <div className="space-y-4">
       {/* Tab Navigation */}
       <div className="flex space-x-2 border-b border-border">
-        {tabs.map((tab) => (
-          <Button
-            key={tab.id}
-            variant="ghost"
-            className={`px-4 py-2 rounded-none border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-            onClick={() => {
-              setActiveTab(tab.id);
-              if (tab.id === "new") {
-                handleCreateNewEstablishment();
-              }
-            }}
-            data-testid={`tab-establishment-${tab.id}`}
-          >
-            {tab.id === "new" && <Plus className="h-4 w-4 mr-2" />}
-            {tab.name}
-          </Button>
-        ))}
+        {tabs.map((tab) => {
+          const isShared = tab.id !== "new" && sharedEstablishmentIds.includes(tab.id);
+          const isActive = activeTab === tab.id;
+          
+          return (
+            <Button
+              key={tab.id}
+              variant="ghost"
+              className={`px-4 py-2 rounded-none border-b-2 transition-colors ${
+                isActive
+                  ? isShared 
+                    ? "border-blue-500 text-blue-600" 
+                    : "border-primary text-primary"
+                  : isShared
+                    ? "border-transparent text-blue-600 hover:text-blue-700"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => {
+                setActiveTab(tab.id);
+                if (tab.id === "new") {
+                  handleCreateNewEstablishment();
+                }
+              }}
+              data-testid={`tab-establishment-${tab.id}`}
+            >
+              {tab.id === "new" && <Plus className="h-4 w-4 mr-2" />}
+              {isShared && <Share2 className="h-3 w-3 mr-1.5" />}
+              {tab.name}
+            </Button>
+          );
+        })}
       </div>
 
       {/* Información del Establecimiento */}
       {currentEstablishment && activeTab !== "new" && (
         <Card className="w-full mb-4">
           <CardContent className="p-4">
-            <div className="flex justify-between items-start">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Dirección:</span>
-                  <span className="font-medium" data-testid="text-establishment-address">{currentEstablishment.address}</span>
-                </div>
-                {currentEstablishment.phone && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Teléfono:</span>
-                    <span className="font-medium" data-testid="text-establishment-phone">{currentEstablishment.phone}</span>
+            <div className="space-y-3">
+              {sharedEstablishmentIds.includes(currentEstablishment.id) && (
+                <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md">
+                  <Share2 className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                  <div className="text-sm">
+                    <span className="font-medium text-blue-700 dark:text-blue-300">Establecimiento Compartido</span>
+                    <span className="text-blue-600 dark:text-blue-400"> - Compartido por {currentEstablishment.owner}</span>
                   </div>
-                )}
+                </div>
+              )}
+              <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-muted-foreground">Dirección:</span>
+                    <span className="font-medium" data-testid="text-establishment-address">{currentEstablishment.address}</span>
+                  </div>
+                  {currentEstablishment.phone && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">Teléfono:</span>
+                      <span className="font-medium" data-testid="text-establishment-phone">{currentEstablishment.phone}</span>
+                    </div>
+                  )}
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handleViewEstablishment(currentEstablishment)}
+                  data-testid="button-view-establishment"
+                >
+                  <Eye className="h-4 w-4 mr-2" />
+                  Ver
+                </Button>
               </div>
-              <Button 
-                size="sm" 
-                variant="outline"
-                onClick={() => handleViewEstablishment(currentEstablishment)}
-                data-testid="button-view-establishment"
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                Ver
-              </Button>
             </div>
           </CardContent>
         </Card>
