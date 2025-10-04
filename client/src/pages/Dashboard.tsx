@@ -3,13 +3,9 @@ import Header from "@/components/Header";
 import TabNavigation from "@/components/TabNavigation";
 import MillManagement from "@/components/MillManagement";
 import ChacrasManagement from "@/components/ChacrasManagement";
-import ChacrasManagementMolino from "@/components/ChacrasManagementMolino";
 import EventsManagement from "@/components/EventsManagement";
-import EventsManagementMolino from "@/components/EventsManagementMolino";
 import CosechaManagement from "@/components/CosechaManagement";
-import CosechaManagementMolino from "@/components/CosechaManagementMolino";
 import TrazabilidadManagement from "@/components/TrazabilidadManagement";
-import TrazabilidadManagementMolino from "@/components/TrazabilidadManagementMolino";
 import EmptyStateCard from "@/components/EmptyStateCard";
 import { useUser } from "@/contexts/UserContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,25 +86,25 @@ export default function Dashboard() {
       case "chacras":
         return (
           <div className="max-w-6xl">
-            {isProductor ? <ChacrasManagement /> : <ChacrasManagementMolino />}
+            <ChacrasManagement />
           </div>
         );
       case "eventos":
         return (
           <div className="max-w-7xl">
-            {isProductor ? <EventsManagement /> : <EventsManagementMolino />}
+            <EventsManagement />
           </div>
         );
       case "cosecha":
         return (
           <div className="max-w-7xl">
-            {isProductor ? <CosechaManagement /> : <CosechaManagementMolino />}
+            <CosechaManagement />
           </div>
         );
       case "trazabilidad":
         return (
           <div className="max-w-7xl">
-            {isProductor ? <TrazabilidadManagement /> : <TrazabilidadManagementMolino />}
+            <TrazabilidadManagement />
           </div>
         );
       default:
