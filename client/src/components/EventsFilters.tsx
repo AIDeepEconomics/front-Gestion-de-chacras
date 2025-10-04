@@ -82,6 +82,7 @@ export default function EventsFilters({ onFilterChange }: EventsFiltersProps) {
               <SelectItem value="all">Todos</SelectItem>
               <SelectItem value="la-juanita">La Juanita</SelectItem>
               <SelectItem value="don-timoteo">Don Timoteo</SelectItem>
+              <SelectItem value="los-pinos">Los Pinos</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -115,7 +116,6 @@ export default function EventsFilters({ onFilterChange }: EventsFiltersProps) {
               <SelectItem value="all">Todos</SelectItem>
               <SelectItem value="propiedad">Propiedad</SelectItem>
               <SelectItem value="arrendamiento">Arrendamiento</SelectItem>
-              <SelectItem value="gestionando para terceros">Gestionando para Terceros</SelectItem>
             </SelectContent>
           </Select>
         </div>
