@@ -279,16 +279,6 @@ export default function RemitoGenerationForm({ onSubmit, selectedChacras }: Remi
               )}
             </div>
 
-            {/* Selected Chacras Info */}
-            <div className="p-4 bg-muted/30 rounded-md">
-              <p className="text-sm text-muted-foreground">
-                {selectedChacras.length > 0 
-                  ? `${selectedChacras.length} chacra${selectedChacras.length > 1 ? 's' : ''} seleccionada${selectedChacras.length > 1 ? 's' : ''} como origen`
-                  : "Seleccione las chacras de origen en la tabla de abajo"
-                }
-              </p>
-            </div>
-
             {/* Submit Button */}
             <div className="flex justify-end">
               <Button

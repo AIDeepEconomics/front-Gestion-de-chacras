@@ -15,7 +15,8 @@ export default function ChacrasManagement() {
       rut: "21.456.789-0",
       latitude: "-32.3054",
       longitude: "-58.0836",
-      referenceCoordinates: "-32.3054, -58.0836"
+      referenceCoordinates: "-32.3054, -58.0836",
+      adminEmail: null
     },
     { 
       id: "2", 
@@ -26,7 +27,8 @@ export default function ChacrasManagement() {
       rut: "21.456.789-0",
       latitude: "-33.2341",
       longitude: "-54.3872",
-      referenceCoordinates: "-33.2341, -54.3872"
+      referenceCoordinates: "-33.2341, -54.3872",
+      adminEmail: null
     },
   ]);
 
