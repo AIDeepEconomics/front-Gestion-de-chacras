@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Map, Plus, Eye, Edit, Phone, MapPin, Info, Share2 } from "lucide-react";
+import { Map, Plus, Eye, Edit, Phone, MapPin, Info, Share2, Hand, ZoomIn, MousePointer } from "lucide-react";
 import { Establishment } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -190,28 +190,84 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
       )}
 
       {/* Map Display */}
-      <Card className="w-full h-80">
-        <CardContent className="flex items-center justify-center h-full p-0">
-          <div className="text-center space-y-4">
-            <div className="p-4 bg-muted rounded-full inline-block">
-              <Map className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <div>
-              <h3 className="text-lg font-medium text-foreground">
-                {activeTab === "new" 
-                  ? "Nuevo Establecimiento" 
-                  : tabs.find(t => t.id === activeTab)?.name
-                }
-              </h3>
-              <p className="text-muted-foreground">
-                Mapa del establecimiento
-              </p>
-              {activeTab !== "new" && (
-                <p className="text-sm text-muted-foreground mt-2">
-                  Mostrando polígonos y chacras del establecimiento
+      <Card className="w-full">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-muted rounded-lg">
+                <Map className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  {activeTab === "new" 
+                    ? "Vista de Mapa - Nuevo Establecimiento" 
+                    : `Vista de Mapa - ${tabs.find(t => t.id === activeTab)?.name}`
+                  }
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {activeTab === "new" 
+                    ? "Aquí se mostrará el mapa interactivo una vez que se cree el establecimiento."
+                    : "Mapa interactivo mostrando todas las chacras del usuario, centrado en este establecimiento."
+                  }
                 </p>
-              )}
+              </div>
             </div>
+
+            {activeTab !== "new" && (
+              <div className="border-t border-border pt-4 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-md">
+                    <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-medium text-foreground">Centrado en este establecimiento</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Vista inicial basada en las coordenadas de referencia
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-md">
+                    <Plus className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-medium text-foreground">Crear polígonos de chacras</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Las nuevas chacras se asignarán a este establecimiento
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-md">
+                    <Hand className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-medium text-foreground">Navegación con arrastre</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Mueve el mapa arrastrando con el cursor
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 p-3 bg-muted/30 rounded-md">
+                    <ZoomIn className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="text-sm font-medium text-foreground">Zoom interactivo</div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Acerca y aleja para ver detalles
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md p-3">
+                  <div className="flex items-start gap-2">
+                    <MousePointer className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-blue-700 dark:text-blue-300">
+                      <span className="font-medium">Visualización completa:</span> El mapa muestra todas tus chacras, 
+                      independientemente del establecimiento. Puedes navegar libremente entre todos tus campos.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
