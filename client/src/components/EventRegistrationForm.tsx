@@ -109,6 +109,7 @@ export default function EventRegistrationForm({ onSubmit }: EventRegistrationFor
   });
 
   const eventTypes = [
+    { value: "inicio_zafra", label: "Inicio de Zafra" },
     { value: "laboreo", label: "Laboreo" },
     { value: "fertilización", label: "Fertilización" },
     { value: "siembra", label: "Siembra" },
@@ -116,7 +117,8 @@ export default function EventRegistrationForm({ onSubmit }: EventRegistrationFor
     { value: "inundación", label: "Inundación" },
     { value: "aplicación", label: "Aplicación" },
     { value: "drenado", label: "Drenado" },
-    { value: "cosecha", label: "Cosecha" }
+    { value: "cosecha", label: "Cosecha" },
+    { value: "fin_zafra", label: "Fin de Zafra" }
   ];
 
   const watchedEventType = form.watch("eventType");
