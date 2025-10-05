@@ -231,7 +231,7 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
                     <div>
                       <div className="text-sm font-medium text-foreground">Crear polígonos de chacras</div>
                       <div className="text-xs text-muted-foreground mt-1">
-                        Las nuevas chacras se asignarán a este establecimiento
+                        Las nuevas chacras se asignarán al establecimiento seleccionado (pestaña superior)
                       </div>
                     </div>
                   </div>
