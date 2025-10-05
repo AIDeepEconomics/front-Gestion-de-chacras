@@ -3,8 +3,16 @@ import TimelineRow from "./TimelineRow";
 import TimelineModal from "./TimelineModal";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { Chacra, Event, Zafra } from "@shared/schema";
 import { EventFilters } from "./EventsFilters";
+import { FileDown, Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface EventsTableProps {
   chacras: Chacra[];
@@ -56,6 +64,11 @@ export default function EventsTable({ chacras, events, zafras, filters, selected
   const isAllSelected = filteredChacras.length > 0 && filteredChacras.every(chacra => selectedChacras.includes(chacra.id));
   const isSomeSelected = filteredChacras.some(chacra => selectedChacras.includes(chacra.id));
 
+  const handleExportToExcel = () => {
+    // TODO: Implement Excel export functionality
+    console.log("Exporting selected chacras to Excel:", selectedChacras);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -75,20 +88,56 @@ export default function EventsTable({ chacras, events, zafras, filters, selected
             </label>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
-          {selectedChacras.length > 0 && (
-            <Badge variant="default" className="text-sm">
-              {selectedChacras.filter(id => filteredChacras.find(c => c.id === id)).length} seleccionadas
+        <div className="flex items-center gap-3">
+          <div className="flex items-center space-x-2">
+            {selectedChacras.length > 0 && (
+              <Badge variant="default" className="text-sm">
+                {selectedChacras.filter(id => filteredChacras.find(c => c.id === id)).length} seleccionadas
+              </Badge>
+            )}
+            <Badge variant="secondary" className="text-sm">
+              {filteredChacras.length} de {chacras.length} chacras
             </Badge>
-          )}
-          <Badge variant="secondary" className="text-sm">
-            {filteredChacras.length} de {chacras.length} chacras
-          </Badge>
-          {filters.establishment !== "all" || filters.regime !== "all" || filters.type !== "all" ? (
-            <Badge variant="outline" className="text-sm">
-              Filtros activos
-            </Badge>
-          ) : null}
+            {filters.establishment !== "all" || filters.regime !== "all" || filters.type !== "all" ? (
+              <Badge variant="outline" className="text-sm">
+                Filtros activos
+              </Badge>
+            ) : null}
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportToExcel}
+              disabled={selectedChacras.length === 0}
+              className="gap-2"
+              data-testid="button-export-excel"
+            >
+              <FileDown className="h-4 w-4" />
+              Exportar en Excel
+            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8"
+                    data-testid="button-export-info"
+                  >
+                    <Info className="h-4 w-4 text-muted-foreground" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">
+                    Exportar el historial de eventos de chacras seleccionadas en Excel
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
       </div>
 
