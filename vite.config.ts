@@ -37,4 +37,14 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
+  preview: {
+    host: '0.0.0.0',
+    port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
+    strictPort: false,
+    allowedHosts: [
+      'front-gestion-de-chacras-production.up.railway.app',
+      '.railway.app',
+      'localhost'
+    ],
+  },
 });
