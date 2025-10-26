@@ -1,4 +1,4 @@
-import { Wheat, User, Settings, Users } from "lucide-react";
+import { Wheat, User, Settings, Users, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
@@ -86,6 +86,13 @@ export default function Header() {
               <DropdownMenuItem data-testid="menu-settings">
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Configuración</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                data-testid="menu-signout"
+                onClick={() => window.location.href = '/login'}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Cerrar Sesión</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

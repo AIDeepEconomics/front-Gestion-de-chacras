@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import TabNavigation from "@/components/TabNavigation";
 import MillManagement from "@/components/MillManagement";
+import { UserManagement } from "@/components/UserManagement";
 import ChacrasManagementProductor from "@/components/ChacrasManagementProductor";
 import ChacrasManagementMolino from "@/components/ChacrasManagementMolino";
 import EventsManagementProductor from "@/components/EventsManagementProductor";
@@ -20,7 +21,7 @@ export default function Dashboard() {
   const { isProductor, isMolino, currentUser } = useUser();
 
   const tabs = [
-    { id: "principal", label: "Principal" },
+    { id: "principal", label: "Permisos" },
     { id: "chacras", label: "Gestión de Chacras y Polígonos" },
     { id: "eventos", label: "Eventos" },
     { id: "cosecha", label: "Cosecha" },
@@ -32,8 +33,9 @@ export default function Dashboard() {
       case "principal":
         if (isProductor) {
           return (
-            <div className="max-w-4xl">
+            <div className="max-w-6xl space-y-6">
               <MillManagement />
+              <UserManagement />
             </div>
           );
         } else {
