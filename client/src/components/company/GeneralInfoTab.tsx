@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building2, Upload, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 export function GeneralInfoTab() {
   const [companyData, setCompanyData] = useState({
@@ -34,32 +34,6 @@ export function GeneralInfoTab() {
 
   return (
     <div className="space-y-6">
-      {/* Logo Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Logo de la Empresa</CardTitle>
-          <CardDescription>
-            Imagen que representa tu empresa en documentos y plataforma
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-6">
-            <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-              <Building2 className="h-16 w-16 text-gray-400" />
-            </div>
-            <div className="flex-1">
-              <Button variant="outline">
-                <Upload className="h-4 w-4 mr-2" />
-                Subir Logo
-              </Button>
-              <p className="text-sm text-muted-foreground mt-2">
-                Formato: PNG, JPG. Tamaño recomendado: 512x512px
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Basic Information */}
       <Card>
         <CardHeader>
