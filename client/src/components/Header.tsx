@@ -1,4 +1,4 @@
-import { Wheat, User, Settings, Users, LogOut } from "lucide-react";
+import { Wheat, User, Settings, Users, LogOut, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
@@ -82,6 +82,13 @@ export default function Header() {
               <DropdownMenuItem data-testid="menu-profile">
                 <User className="mr-2 h-4 w-4" />
                 <span>Mi Perfil</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                data-testid="menu-company"
+                onClick={() => window.location.href = '/empresa'}
+              >
+                <Building2 className="mr-2 h-4 w-4" />
+                <span>Empresa</span>
               </DropdownMenuItem>
               <DropdownMenuItem data-testid="menu-settings">
                 <Settings className="mr-2 h-4 w-4" />
