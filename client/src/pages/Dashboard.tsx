@@ -18,15 +18,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GeneralInfoTab } from '@/components/company/GeneralInfoTab';
 import { CertificationsTab } from '@/components/company/CertificationsTab';
 import { LegalDocumentsTab } from '@/components/company/LegalDocumentsTab';
-import { BillingTab } from '@/components/company/BillingTab';
 import { AuditTab } from '@/components/company/AuditTab';
-import { Building2, Users, FileCheck, FileText, Receipt, History } from "lucide-react";
+import { Building2, Users, FileCheck, FileText, History, Map } from "lucide-react";
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState("principal");
+  const [activeTab, setActiveTab] = useState("vista-general");
   const { isProductor, isMolino, currentUser } = useUser();
 
   const tabs = [
+    { id: "vista-general", label: "Vista General" },
     { id: "principal", label: "Permisos" },
     { id: "empresa", label: "Empresa" },
     { id: "chacras", label: "Gestión de Chacras y Polígonos" },
@@ -37,6 +37,32 @@ export default function Dashboard() {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case "vista-general":
+        return (
+          <div className="max-w-4xl mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Map className="h-5 w-5 text-primary" />
+                  Vista General de Chacras
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="text-center py-12 text-lg text-muted-foreground">
+                  <p className="mb-4">
+                    Mapa interactivo mostrando todas las chacras (polígonos) con sus nombres y enlaces a sus páginas detalladas.
+                  </p>
+                  <ul className="text-left list-disc pl-6 space-y-2">
+                    <li>Vista general de todas las chacras simultáneamente</li>
+                    <li>Selector de establecimientos (todos seleccionados por defecto)</li>
+                    <li>Chacras de establecimientos no seleccionados aparecerán semitransparentes</li>
+                    <li>Navegación similar a la pestaña 'Gestión de Chacras' pero con perspectiva general</li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
       case "principal":
         if (isProductor) {
           return (
@@ -140,11 +166,6 @@ export default function Dashboard() {
                   <span className="hidden sm:inline">Documentación Legal</span>
                   <span className="sm:hidden">Legal</span>
                 </TabsTrigger>
-                <TabsTrigger value="billing" className="flex items-center gap-2">
-                  <Receipt className="h-4 w-4" />
-                  <span className="hidden sm:inline">Facturación</span>
-                  <span className="sm:hidden">Fact.</span>
-                </TabsTrigger>
                 <TabsTrigger value="audit" className="flex items-center gap-2">
                   <History className="h-4 w-4" />
                   <span className="hidden sm:inline">Auditoría</span>
@@ -162,10 +183,6 @@ export default function Dashboard() {
 
               <TabsContent value="legal">
                 <LegalDocumentsTab />
-              </TabsContent>
-
-              <TabsContent value="billing">
-                <BillingTab />
               </TabsContent>
 
               <TabsContent value="audit">

@@ -5,9 +5,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Save } from 'lucide-react';
+import { Save, Edit } from 'lucide-react';
 
 export function GeneralInfoTab() {
+  const [isEditing, setIsEditing] = useState(false);
   const [companyData, setCompanyData] = useState({
     comercialName: 'Arrocera Los Pinos S.A.',
     legalName: 'Arrocera Los Pinos Sociedad Anónima',
@@ -29,11 +30,22 @@ export function GeneralInfoTab() {
   ];
 
   const handleSave = () => {
+    setIsEditing(false);
     alert('Información de empresa actualizada correctamente');
   };
 
   return (
     <div className="space-y-6">
+      {/* Edit Button */}
+      <div className="flex justify-end">
+        {!isEditing ? (
+          <Button onClick={() => setIsEditing(true)} variant="outline">
+            <Edit className="h-4 w-4 mr-2" />
+            Editar Información
+          </Button>
+        ) : null}
+      </div>
+
       {/* Basic Information */}
       <Card>
         <CardHeader>
@@ -50,6 +62,7 @@ export function GeneralInfoTab() {
                 id="comercialName"
                 value={companyData.comercialName}
                 onChange={(e) => setCompanyData({ ...companyData, comercialName: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
 
@@ -59,6 +72,7 @@ export function GeneralInfoTab() {
                 id="legalName"
                 value={companyData.legalName}
                 onChange={(e) => setCompanyData({ ...companyData, legalName: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
 
@@ -68,6 +82,7 @@ export function GeneralInfoTab() {
                 id="rut"
                 value={companyData.rut}
                 onChange={(e) => setCompanyData({ ...companyData, rut: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
 
@@ -77,6 +92,7 @@ export function GeneralInfoTab() {
                 id="foundedYear"
                 value={companyData.foundedYear}
                 onChange={(e) => setCompanyData({ ...companyData, foundedYear: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
           </div>
@@ -88,6 +104,7 @@ export function GeneralInfoTab() {
               value={companyData.description}
               onChange={(e) => setCompanyData({ ...companyData, description: e.target.value })}
               rows={3}
+              disabled={!isEditing}
             />
           </div>
         </CardContent>
@@ -109,6 +126,7 @@ export function GeneralInfoTab() {
                 id="phone"
                 value={companyData.phone}
                 onChange={(e) => setCompanyData({ ...companyData, phone: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
 
@@ -119,6 +137,7 @@ export function GeneralInfoTab() {
                 type="email"
                 value={companyData.email}
                 onChange={(e) => setCompanyData({ ...companyData, email: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
 
@@ -128,6 +147,7 @@ export function GeneralInfoTab() {
                 id="website"
                 value={companyData.website}
                 onChange={(e) => setCompanyData({ ...companyData, website: e.target.value })}
+                disabled={!isEditing}
               />
             </div>
 
@@ -136,6 +156,7 @@ export function GeneralInfoTab() {
               <Select
                 value={companyData.department}
                 onValueChange={(value) => setCompanyData({ ...companyData, department: value })}
+                disabled={!isEditing}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -157,18 +178,21 @@ export function GeneralInfoTab() {
               id="address"
               value={companyData.address}
               onChange={(e) => setCompanyData({ ...companyData, address: e.target.value })}
+              disabled={!isEditing}
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Save Button */}
-      <div className="flex justify-end">
-        <Button onClick={handleSave} className="bg-green-600 hover:bg-green-700">
-          <Save className="h-4 w-4 mr-2" />
-          Guardar Cambios
-        </Button>
-      </div>
+      {isEditing && (
+        <div className="flex justify-end">
+          <Button onClick={handleSave} className="bg-green-600 hover:bg-green-700">
+            <Save className="h-4 w-4 mr-2" />
+            Guardar Cambios
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
