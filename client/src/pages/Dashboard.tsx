@@ -84,7 +84,7 @@ export default function Dashboard() {
         } else {
           // Vista para usuarios de molino
           return (
-            <div className="max-w-4xl space-y-6">
+            <div className="max-w-6xl space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -129,6 +129,7 @@ export default function Dashboard() {
                   </div>
                 </CardContent>
               </Card>
+              <UserManagement />
             </div>
           );
         }
