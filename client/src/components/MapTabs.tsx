@@ -294,7 +294,7 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
           {editingEstablishment && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre</Label>
+                <Label htmlFor="name">Nombre del Establecimiento</Label>
                 <Input
                   id="name"
                   value={editingEstablishment.name}
@@ -327,28 +327,6 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="owner">Propietario</Label>
-                <Input
-                  id="owner"
-                  value={editingEstablishment.owner}
-                  onChange={(e) => setEditingEstablishment({...editingEstablishment, owner: e.target.value})}
-                  disabled={!isEditing}
-                  data-testid="input-establishment-owner"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="rut">RUT</Label>
-                <Input
-                  id="rut"
-                  value={editingEstablishment.rut}
-                  onChange={(e) => setEditingEstablishment({...editingEstablishment, rut: e.target.value})}
-                  disabled={!isEditing}
-                  data-testid="input-establishment-rut"
-                />
-              </div>
-              
-              <div className="space-y-2">
                 <Label htmlFor="coordinates">Coordenadas de Referencia</Label>
                 <Input
                   id="coordinates"
@@ -363,7 +341,7 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
               {showAdminAssignment && (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Label htmlFor="adminEmail">Asignar Usuario como Administrador</Label>
+                    <Label htmlFor="adminEmail">Asignar Empresa Dueña</Label>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -379,12 +357,12 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
                         </TooltipTrigger>
                         <TooltipContent className="max-w-sm">
                           <p>
-                            Designar un Usuario como administrador de este establecimiento hará que el establecimiento 
-                            aparezca en la sesión de ese usuario, el cual podrá editar y controlar todo el establecimiento. 
+                            Designar una empresa como dueña de este establecimiento hará que el establecimiento 
+                            aparezca en la sesión de esa empresa, la cual podrá editar y controlar todo el establecimiento. 
                             Por default, usted mantendrá todos los permisos para también editar el establecimiento, pero 
-                            el usuario administrador puede retirarle los permisos luego si lo desea. Esta opción es útil 
-                            si usted quiere subir la información de un establecimiento de un productor para ahorrarle el 
-                            trabajo al mismo, pudiéndole entregar el control del mismo luego.
+                            la empresa dueña puede retirarle los permisos luego si lo desea. Esta opción es útil 
+                            si usted quiere subir la información de un establecimiento de una empresa productora para ahorrarle el 
+                            trabajo a la misma, pudiéndole entregar el control del mismo luego.
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -392,11 +370,11 @@ export default function MapTabs({ establishments, onAddEstablishment, onUpdateEs
                   </div>
                   <Input
                     id="adminEmail"
-                    type="email"
+                    type="text"
                     value={editingEstablishment.adminEmail || ''}
                     onChange={(e) => setEditingEstablishment({...editingEstablishment, adminEmail: e.target.value})}
                     disabled={!isEditing}
-                    placeholder="email@ejemplo.com"
+                    placeholder="Ej: 211234560018"
                     data-testid="input-establishment-admin-email"
                   />
                 </div>

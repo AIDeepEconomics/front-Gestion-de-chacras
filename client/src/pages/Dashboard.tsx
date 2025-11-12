@@ -11,6 +11,7 @@ import CosechaManagementProductor from "@/components/CosechaManagementProductor"
 import CosechaManagementMolino from "@/components/CosechaManagementMolino";
 import TrazabilidadManagementProductor from "@/components/TrazabilidadManagementProductor";
 import TrazabilidadManagementMolino from "@/components/TrazabilidadManagementMolino";
+import PlantasIndustrialesManagement from "@/components/PlantasIndustrialesManagement";
 import EmptyStateCard from "@/components/EmptyStateCard";
 import { useUser } from "@/contexts/UserContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,13 +20,22 @@ import { GeneralInfoTab } from '@/components/company/GeneralInfoTab';
 import { CertificationsTab } from '@/components/company/CertificationsTab';
 import { LegalDocumentsTab } from '@/components/company/LegalDocumentsTab';
 import { AuditTab } from '@/components/company/AuditTab';
-import { Building2, Users, FileCheck, FileText, History, Map } from "lucide-react";
+import { Building2, Users, FileCheck, FileText, History, Map, Factory } from "lucide-react";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("vista-general");
   const { isProductor, isMolino, currentUser } = useUser();
 
-  const tabs = [
+  const tabs = isMolino ? [
+    { id: "vista-general", label: "Vista General" },
+    { id: "principal", label: "Permisos" },
+    { id: "empresa", label: "Empresa" },
+    { id: "chacras", label: "Gestión de Chacras y Polígonos" },
+    { id: "eventos", label: "Eventos" },
+    { id: "cosecha", label: "Cosecha" },
+    { id: "trazabilidad", label: "Trazabilidad" },
+    { id: "plantas", label: "Gestión de Plantas Industriales" },
+  ] : [
     { id: "vista-general", label: "Vista General" },
     { id: "principal", label: "Permisos" },
     { id: "empresa", label: "Empresa" },
@@ -122,6 +132,12 @@ export default function Dashboard() {
             </div>
           );
         }
+      case "plantas":
+        return (
+          <div className="max-w-6xl">
+            <PlantasIndustrialesManagement />
+          </div>
+        );
       case "chacras":
         return (
           <div className="max-w-6xl">
